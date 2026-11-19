@@ -1,0 +1,2514 @@
+.studio-composer {
+    --studio-accent: #39e3d2;
+    --studio-text: var(--creation-text, var(--fg));
+    --studio-muted: var(--creation-muted, color-mix(in srgb, var(--fg) 58%, transparent));
+    --studio-faint: var(--creation-faint, color-mix(in srgb, var(--fg) 38%, transparent));
+    position: relative;
+    overflow: visible;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 22%, transparent);
+    border-radius: 18px;
+    background: linear-gradient(112deg, color-mix(in srgb, #3d4b52 38%, transparent), color-mix(in srgb, #6a4939 32%, transparent)), color-mix(in srgb, #1c2024 84%, transparent);
+    color: var(--studio-text);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(28px) saturate(118%);
+    -webkit-backdrop-filter: blur(28px) saturate(118%);
+}
+
+html:not(.dark) .studio-composer {
+    background: linear-gradient(112deg, color-mix(in srgb, #dce8ea 64%, transparent), color-mix(in srgb, #eadbd2 56%, transparent)), color-mix(in srgb, #f5f7f7 90%, transparent);
+    box-shadow: 0 24px 58px rgba(48, 55, 60, 0.14);
+}
+
+/* Creation conversation composer. Canvas composers keep their existing layout below. */
+.creation-chat-composer.studio-composer {
+    width: min(877px, 100%);
+    min-height: 152px;
+    max-height: 292px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 9%, transparent);
+    border-radius: 23px;
+    background: linear-gradient(145deg, color-mix(in srgb, #29292c 96%, transparent), color-mix(in srgb, #1b1b1d 98%, transparent));
+    box-shadow:
+        0 24px 72px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 color-mix(in srgb, white 4%, transparent);
+}
+
+html:not(.dark) .creation-chat-composer.studio-composer {
+    border-color: color-mix(in srgb, var(--studio-text) 11%, transparent);
+    background: linear-gradient(145deg, color-mix(in srgb, #ffffff 98%, transparent), color-mix(in srgb, #f0f1f2 98%, transparent));
+    box-shadow:
+        0 20px 54px rgba(48, 55, 60, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.creation-chat-composer.studio-composer .studio-composer-writing {
+    min-height: 0;
+    flex: 1 1 auto;
+    grid-template-columns: 62px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 13px;
+    overflow: hidden;
+    padding: 16px 14px 2px;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-reference {
+    width: 50px;
+    min-height: 68px;
+    align-self: start;
+    border: 0;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--studio-text) 12%, transparent);
+    padding: 6px;
+    transform: rotate(-8deg);
+}
+
+.creation-chat-composer.studio-composer .studio-composer-reference:hover:not(:disabled),
+.creation-chat-composer.studio-composer .studio-composer-reference.is-active {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--studio-text) 18%, transparent);
+    transform: rotate(-4deg) translateY(-2px);
+}
+
+.creation-chat-composer.studio-composer .studio-composer-reference > strong,
+.creation-chat-composer.studio-composer .studio-composer-reference > small {
+    display: none;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-reference-preview,
+.creation-chat-composer.studio-composer .studio-composer-uploading {
+    width: 38px;
+    height: 52px;
+    border-radius: 4px;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-reference-preview {
+    display: block;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-reference-preview > * {
+    width: 100%;
+    height: 100%;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-reference > svg {
+    width: 21px;
+    height: 21px;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-editor {
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.creation-chat-composer.studio-composer .creation-chat-mention-container {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.creation-chat-composer.studio-composer .creation-chat-mention-editor,
+.creation-chat-composer.studio-composer .creation-chat-editor textarea {
+    min-height: 0;
+    height: 100%;
+    max-height: none;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 5px 0 2px;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.creation-chat-composer.studio-composer .creation-chat-attachment-strip,
+.creation-chat-composer.studio-composer .studio-upload-status,
+.creation-chat-composer.studio-composer .studio-document-strip {
+    flex: 0 0 auto;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-dock {
+    min-height: 46px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+    padding: 0 12px 10px 76px;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-tools {
+    flex-wrap: nowrap;
+    gap: 2px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-tools::-webkit-scrollbar {
+    display: none;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-tool,
+.creation-chat-composer.studio-composer .creation-chat-control,
+.creation-chat-composer.studio-composer .canvas-composer-model-picker,
+.creation-chat-composer.studio-composer .studio-skill-trigger {
+    height: 34px !important;
+    min-height: 34px;
+    flex: 0 0 auto;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    color: var(--studio-muted) !important;
+    padding: 0 7px !important;
+    box-shadow: none !important;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.creation-chat-composer.studio-composer .creation-chat-control.is-mode,
+.creation-chat-composer.studio-composer .creation-chat-control.is-mode > svg:first-child {
+    color: #36d8f4 !important;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-tool:hover:not(:disabled),
+.creation-chat-composer.studio-composer .creation-chat-control:hover:not(:disabled),
+.creation-chat-composer.studio-composer .canvas-composer-model-picker:hover,
+.creation-chat-composer.studio-composer .studio-skill-trigger:hover:not(:disabled),
+.creation-chat-composer.studio-composer .studio-skill-trigger.is-active {
+    background: color-mix(in srgb, var(--studio-text) 8%, transparent) !important;
+    color: var(--studio-text) !important;
+}
+
+.creation-chat-composer.studio-composer .creation-model-picker.canvas-composer-model-picker {
+    width: min(154px, 25vw) !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    padding-inline: 7px !important;
+}
+
+.creation-chat-composer.studio-composer .studio-skill-trigger {
+    gap: 6px;
+}
+
+.creation-chat-composer.studio-composer .studio-skill-trigger > svg:last-child {
+    width: 12px;
+}
+
+.creation-chat-composer.studio-composer .creation-chat-control.is-quick-setting {
+    min-width: 0;
+    padding-inline: 5px !important;
+}
+
+.creation-chat-composer.studio-composer .studio-composer-submit,
+.creation-chat-composer.studio-composer .studio-composer-stop {
+    width: 42px;
+    height: 42px;
+}
+
+@media (min-width: 721px) {
+    .creation-chat-composer.studio-composer:has(.studio-composer-stop) .studio-composer-writing {
+        padding-right: var(--space-16);
+    }
+
+    .creation-chat-composer.studio-composer .studio-composer-actions {
+        position: relative;
+    }
+
+    /* Keep the transient stop control out of the dock flow so it cannot hide tools. */
+    .creation-chat-composer.studio-composer .studio-composer-stop {
+        position: absolute;
+        z-index: var(--z-toolbar);
+        right: 0;
+        bottom: calc(100% + var(--space-2));
+    }
+}
+
+.studio-composer.is-dragging {
+    border-color: color-mix(in srgb, var(--studio-accent) 78%, white 8%);
+    box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.24),
+        inset 0 0 0 1px color-mix(in srgb, var(--studio-accent) 45%, transparent);
+}
+
+.studio-composer-tabs {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 4px;
+    margin: 0 14px;
+    border-bottom: 1px solid color-mix(in srgb, var(--studio-text) 13%, transparent);
+    padding: 0 0 2px;
+}
+
+.studio-composer-tab,
+.studio-composer-link {
+    display: inline-flex;
+    min-width: 0;
+    height: 40px;
+    align-items: center;
+    gap: 7px;
+    border: 0;
+    background: transparent;
+    color: var(--studio-faint);
+    padding: 0 10px;
+    font-size: var(--fs-body);
+    font-weight: 620;
+    text-decoration: none;
+    transition:
+        color var(--motion-dur-fast-calc) ease,
+        background-color var(--motion-dur-fast-calc) ease;
+}
+
+.studio-composer-tab:hover,
+.studio-composer-link:hover {
+    color: var(--studio-text);
+}
+.studio-composer-tab.is-active {
+    color: var(--studio-text);
+}
+.studio-composer-tab + .studio-composer-tab {
+    position: relative;
+}
+.studio-composer-tab + .studio-composer-tab::before {
+    position: absolute;
+    left: -2px;
+    width: 1px;
+    height: 18px;
+    background: color-mix(in srgb, var(--studio-text) 16%, transparent);
+    content: "";
+}
+
+.studio-composer-badge {
+    display: inline-flex;
+    height: 19px;
+    align-items: center;
+    border-radius: 5px;
+    background: #b8f590;
+    color: #172115;
+    padding: 0 5px;
+    font-size: var(--fs-tiny);
+    font-weight: 760;
+    line-height: 1;
+}
+
+.studio-composer-link {
+    margin-left: auto;
+    font-size: var(--fs-label);
+}
+.studio-composer-link svg {
+    width: 15px;
+    height: 15px;
+}
+
+.studio-skill-trigger {
+    display: inline-flex;
+    height: 30px;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--studio-faint);
+    padding: 0 8px;
+    font-size: var(--fs-label);
+    transition:
+        color var(--motion-dur-fast-calc) ease,
+        background-color var(--motion-dur-fast-calc) ease;
+}
+.studio-skill-trigger:hover:not(:disabled),
+.studio-skill-trigger.is-active {
+    background: color-mix(in srgb, var(--studio-accent) 10%, transparent);
+    color: var(--studio-text);
+}
+.studio-skill-trigger > svg {
+    width: 15px;
+    height: 15px;
+}
+.studio-skill-trigger > svg:last-child {
+    width: 13px;
+    color: var(--studio-faint);
+    transition: transform var(--motion-dur-fast-calc) ease;
+}
+.studio-skill-trigger > svg:last-child.is-open {
+    transform: rotate(180deg);
+}
+.studio-skill-trigger em {
+    display: grid;
+    min-width: 18px;
+    height: 18px;
+    place-items: center;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--studio-accent) 18%, transparent);
+    color: var(--studio-accent);
+    font-size: var(--fs-tiny);
+    font-style: normal;
+    font-weight: 720;
+}
+
+.studio-composer-writing {
+    display: grid;
+    min-height: 116px;
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 14px;
+    padding: 12px 18px 6px;
+}
+
+.studio-composer-reference {
+    display: flex;
+    min-height: 88px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    overflow: hidden;
+    border: 1px dashed color-mix(in srgb, var(--studio-text) 22%, transparent);
+    border-radius: 8px;
+    background: color-mix(in srgb, #101316 28%, transparent);
+    color: var(--studio-faint);
+    padding: 8px;
+    text-align: center;
+    transition:
+        border-color var(--motion-dur-fast-calc) ease,
+        background-color var(--motion-dur-fast-calc) ease,
+        color var(--motion-dur-fast-calc) ease;
+}
+
+html:not(.dark) .studio-composer-reference {
+    background: color-mix(in srgb, #ffffff 38%, transparent);
+}
+.studio-composer-reference:hover:not(:disabled),
+.studio-composer-reference.is-active {
+    border-color: color-mix(in srgb, var(--studio-accent) 66%, transparent);
+    background: color-mix(in srgb, var(--studio-accent) 10%, transparent);
+    color: var(--studio-text);
+}
+.studio-composer-reference svg {
+    width: 22px;
+    height: 22px;
+}
+.studio-composer-reference strong {
+    font-size: var(--fs-label);
+    font-weight: 650;
+}
+.studio-composer-reference small {
+    color: var(--studio-faint);
+    font-size: var(--fs-tiny);
+    line-height: 1.35;
+}
+
+.studio-composer-reference-preview {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.studio-composer-reference-preview img,
+.studio-composer-reference-preview video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.studio-composer-reference-preview > :only-child {
+    grid-column: 1 / -1;
+}
+.studio-composer-uploading {
+    position: relative;
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--studio-accent) 10%, transparent);
+    color: var(--studio-accent);
+}
+.studio-composer-uploading svg {
+    width: 24px;
+    height: 24px;
+}
+.studio-composer-uploading em {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    display: grid;
+    min-width: 18px;
+    height: 18px;
+    place-items: center;
+    border-radius: 9px;
+    background: var(--studio-accent);
+    color: #101514;
+    font-size: var(--fs-tiny);
+    font-style: normal;
+    font-weight: 760;
+}
+.studio-composer-reference.is-uploading {
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--studio-accent) 50%, transparent);
+}
+
+.studio-composer-editor {
+    min-width: 0;
+}
+.studio-composer .creation-chat-mention-container,
+.studio-composer .creation-chat-mention-editor,
+.studio-composer .creation-chat-editor textarea {
+    min-height: 70px;
+    color: var(--studio-text);
+    font-size: var(--fs-body);
+    line-height: 1.75;
+}
+
+.studio-composer .creation-chat-mention-editor::placeholder,
+.studio-canvas-editor:empty::before {
+    color: var(--studio-faint);
+}
+
+.studio-document-strip {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.studio-document-chip {
+    display: inline-flex;
+    min-width: 0;
+    max-width: 240px;
+    height: 29px;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 12%, transparent);
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--studio-text) 7%, transparent);
+    color: var(--studio-muted);
+    padding: 0 7px;
+    font-size: var(--fs-tiny);
+}
+
+.studio-document-chip > svg {
+    width: 13px;
+    height: 13px;
+    flex: 0 0 auto;
+    color: var(--studio-accent);
+}
+.studio-document-chip > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.studio-document-chip button {
+    display: grid;
+    width: 19px;
+    height: 19px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--studio-faint);
+}
+.studio-document-chip button:hover {
+    background: color-mix(in srgb, var(--studio-text) 9%, transparent);
+    color: var(--studio-text);
+}
+.studio-document-chip button svg {
+    width: 11px;
+    height: 11px;
+}
+.studio-upload-status {
+    display: inline-flex;
+    min-height: 29px;
+    align-items: center;
+    gap: 7px;
+    margin-top: 6px;
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--studio-accent) 9%, transparent);
+    color: var(--studio-muted);
+    padding: 0 9px;
+    font-size: var(--fs-tiny);
+}
+.studio-upload-status svg {
+    width: 14px;
+    height: 14px;
+    color: var(--studio-accent);
+}
+
+.studio-composer-dock {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 12px 12px 14px;
+}
+
+.studio-composer-tools {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+.studio-composer-tool,
+.studio-composer .creation-chat-control,
+.studio-composer .canvas-composer-model-picker {
+    display: inline-flex;
+    height: 32px !important;
+    min-width: 32px;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--studio-faint) !important;
+    padding: 0 8px !important;
+    font-size: var(--fs-label);
+    transition:
+        color var(--motion-dur-fast-calc) ease,
+        background-color var(--motion-dur-fast-calc) ease;
+}
+
+.studio-composer-tool:hover:not(:disabled),
+.studio-composer .creation-chat-control:hover:not(:disabled),
+.studio-composer .canvas-composer-model-picker:hover {
+    background: color-mix(in srgb, var(--studio-text) 9%, transparent) !important;
+    color: var(--studio-text) !important;
+}
+.studio-composer-tool svg {
+    width: 19px;
+    height: 19px;
+}
+.studio-composer .creation-chat-control.is-mode {
+    color: var(--studio-text) !important;
+}
+.studio-composer .creation-model-picker.canvas-composer-model-picker {
+    width: min(230px, 32vw) !important;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 13%, transparent) !important;
+    border-radius: 999px !important;
+    padding: 0 11px !important;
+}
+
+.studio-composer-submit {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 13%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--studio-text) 10%, transparent);
+    color: var(--studio-text);
+    transition:
+        transform var(--motion-dur-fast-calc) var(--motion-ease-out),
+        background-color var(--motion-dur-fast-calc) ease;
+}
+
+.studio-composer-submit-stack {
+    display: inline-flex;
+    width: auto;
+    height: var(--space-10);
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2);
+}
+
+.studio-composer-submit-stack.is-canvas {
+    width: auto;
+    height: var(--space-8);
+    gap: var(--space-1-half);
+}
+
+.studio-composer-submit-stack.is-canvas-text {
+    width: auto;
+    min-width: var(--space-16);
+    height: var(--space-8);
+}
+
+.studio-generation-cost {
+    display: inline-flex;
+    min-width: max-content;
+    height: var(--space-8);
+    align-items: center;
+    gap: var(--space-1);
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--studio-text);
+    padding: 0;
+    font-size: var(--fs-body);
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+html:not(.dark) .studio-generation-cost {
+    color: var(--studio-text);
+}
+
+.studio-generation-cost.is-compact {
+    height: var(--space-7);
+    font-size: var(--fs-micro);
+}
+
+.studio-generation-cost.is-unconfigured {
+    border-color: color-mix(in srgb, var(--status-warning) 45%, transparent);
+    color: var(--status-warning);
+}
+
+.studio-generation-cost.is-unavailable {
+    border-color: color-mix(in srgb, var(--status-error) 48%, transparent);
+    color: var(--status-error);
+}
+
+.studio-generation-cost.is-not_applicable {
+    color: var(--studio-muted);
+}
+
+.studio-generation-cost-symbol {
+    display: inline-grid;
+    width: 19px;
+    height: 19px;
+    place-items: center;
+    color: #9c72ff;
+}
+
+.studio-generation-cost-symbol svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 2.2;
+}
+
+.studio-generation-cost.is-compact .studio-generation-cost-symbol {
+    width: 15px;
+    height: 15px;
+}
+
+.studio-composer-submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--studio-text) 17%, transparent);
+}
+.studio-composer-submit:disabled {
+    cursor: not-allowed;
+    opacity: 0.34;
+}
+.studio-composer-submit svg {
+    width: 17px;
+    height: 17px;
+}
+
+.studio-composer-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.studio-composer-stop {
+    position: relative;
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 13%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--studio-text) 7%, transparent);
+    color: var(--studio-muted);
+    transition:
+        transform var(--motion-dur-fast-calc) var(--motion-ease-out),
+        background-color var(--motion-dur-fast-calc) ease,
+        color var(--motion-dur-fast-calc) ease;
+}
+
+.studio-composer-stop:hover {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--studio-text) 13%, transparent);
+    color: var(--studio-text);
+}
+
+.studio-composer-stop svg {
+    width: 13px;
+    height: 13px;
+}
+
+.studio-composer-stop span {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    display: grid;
+    min-width: 17px;
+    height: 17px;
+    place-items: center;
+    border: 2px solid var(--studio-panel);
+    border-radius: 999px;
+    background: var(--studio-text);
+    color: var(--studio-panel);
+    padding: 0 4px;
+    font-size: var(--fs-micro);
+    font-weight: 700;
+    line-height: 1;
+}
+
+.studio-drop-overlay {
+    position: absolute;
+    z-index: var(--z-toolbar);
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: inherit;
+    background: color-mix(in srgb, #101416 72%, transparent);
+    color: white;
+    pointer-events: none;
+    backdrop-filter: blur(9px);
+}
+
+.studio-drop-overlay span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-body);
+    font-weight: 650;
+}
+.studio-drop-overlay svg {
+    width: 20px;
+    height: 20px;
+    color: var(--studio-accent);
+}
+
+.creation-composer-mode-menu {
+    width: 226px;
+    padding: 8px;
+}
+
+.creation-composer-mode-heading {
+    display: block;
+    padding: 7px 10px 8px;
+    color: #77777e;
+    font-size: 12px;
+}
+
+.creation-composer-mode-menu button {
+    height: 43px;
+    border-radius: 8px;
+    padding-inline: 10px;
+    font-size: 13px;
+}
+
+.creation-composer-mode-menu .creation-menu-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+}
+
+.creation-composer-mode-menu .creation-menu-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.creation-duration-slider-popover {
+    width: 390px;
+    padding: 19px 22px 18px;
+    color: #f1f1f3;
+}
+
+.creation-duration-title {
+    display: block;
+    margin-bottom: 17px;
+    color: #96969d;
+    font-size: 14px;
+    font-weight: 660;
+}
+
+.creation-duration-picker {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 104px;
+    align-items: center;
+    gap: 18px;
+}
+
+.creation-duration-range-wrap {
+    min-width: 0;
+}
+
+.creation-duration-range {
+    width: 100%;
+    height: 20px;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.creation-duration-range::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #b7b7bc 0 var(--creation-duration-progress, 50%), #505055 var(--creation-duration-progress, 50%) 100%);
+}
+
+.creation-duration-range::-webkit-slider-thumb {
+    width: 7px;
+    height: 20px;
+    margin-top: -6px;
+    appearance: none;
+    border: 0;
+    border-radius: 4px;
+    background: #f4f4f5;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.creation-duration-range::-moz-range-track {
+    height: 8px;
+    border-radius: 999px;
+    background: #505055;
+}
+
+.creation-duration-range::-moz-range-progress {
+    height: 8px;
+    border-radius: 999px;
+    background: #b7b7bc;
+}
+
+.creation-duration-range::-moz-range-thumb {
+    width: 7px;
+    height: 20px;
+    border: 0;
+    border-radius: 4px;
+    background: #f4f4f5;
+}
+
+.creation-duration-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    color: #aaaab0;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.creation-duration-output {
+    display: flex;
+    height: 54px;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 12px;
+    background: #373739;
+    padding: 0 15px;
+    color: #f1f1f3;
+    font-size: 16px;
+    font-weight: 680;
+    font-variant-numeric: tabular-nums;
+}
+
+.creation-duration-output span {
+    color: #8e8e95;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.studio-canvas-composer {
+    width: min(720px, calc(100vw - 32px));
+    padding: 0;
+    border-radius: 20px;
+    border-color: color-mix(in srgb, var(--studio-text) 16%, transparent);
+    background: color-mix(in srgb, var(--bg) 88%, #1d2128 12%);
+    box-shadow: 0 22px 56px rgba(0, 0, 0, 0.28);
+    --canvas-composer-border: color-mix(in srgb, var(--studio-text) 22%, transparent);
+    --canvas-composer-control: color-mix(in srgb, var(--studio-text) 8%, transparent);
+    --canvas-composer-text: var(--studio-text);
+    --canvas-composer-muted: var(--studio-muted);
+    --input-selected: color-mix(in srgb, var(--studio-text) 14%, transparent);
+}
+
+html:not(.dark) .studio-canvas-composer {
+    background: color-mix(in srgb, #ffffff 92%, var(--bg) 8%);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.16);
+}
+.studio-canvas-composer .studio-composer-tabs {
+    padding-top: 2px;
+}
+.studio-canvas-writing {
+    position: relative;
+    min-height: 118px;
+    padding: 12px 16px 4px;
+}
+.studio-canvas-editor {
+    min-height: 82px;
+    max-height: min(42vh, 360px);
+    overflow-y: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--studio-text);
+    font-size: var(--fs-body);
+    line-height: 1.75;
+    outline: none;
+}
+.studio-canvas-editor:empty::before {
+    content: attr(data-placeholder);
+    pointer-events: none;
+}
+.studio-canvas-dock {
+    border-top: 1px solid color-mix(in srgb, var(--studio-text) 10%, transparent);
+}
+.studio-canvas-context {
+    color: var(--studio-faint);
+    font-size: var(--fs-tiny);
+}
+
+/* 参考稿的灰阶仅作用于画布输入框；公共 Composer 和生成协议保持独立。 */
+.canvas-node-studio-surface,
+.canvas-image-settings-popover-segmented,
+.canvas-composer-picker-surface,
+.canvas-node-reference-menu {
+    --input-gray-900: #262626;
+    --input-gray-850: #333333;
+    --input-gray-800: #333333;
+    --input-gray-700: #383838;
+    --input-gray-500: #666666;
+    --input-gray-300: #999999;
+    --input-gray-200: #ededed;
+    --input-white: #ffffff;
+    --input-green: #4ade80;
+    --input-surface: var(--input-gray-900);
+    --input-control: var(--input-gray-800);
+    --input-option: var(--input-gray-850);
+    --input-border: var(--input-gray-700);
+    --input-selected: var(--input-gray-700);
+    --input-selected-border: var(--input-gray-500);
+    --input-muted: var(--input-gray-300);
+    --input-text: var(--input-gray-200);
+    --input-action: var(--input-white);
+    --input-action-text: var(--input-gray-900);
+    --canvas-composer-surface: var(--input-surface);
+    --canvas-composer-control: var(--input-control);
+    --canvas-composer-divider: var(--input-control);
+    --canvas-composer-border: var(--input-border);
+    --canvas-composer-text: var(--input-text);
+    --canvas-composer-muted: var(--input-muted);
+    --canvas-composer-send: var(--input-action);
+    --canvas-composer-send-text: var(--input-action-text);
+    --canvas-composer-status: var(--input-green);
+    --canvas-composer-radius: var(--r-3xl);
+    --canvas-composer-control-radius: var(--r-md);
+    --canvas-composer-padding: var(--space-3);
+    --canvas-composer-height: calc(var(--space-16) * 4);
+    --canvas-composer-reference-height: calc(var(--space-16) * 4 + var(--space-6));
+    --canvas-composer-frame-height: calc(var(--space-16) * 5);
+    --canvas-composer-scroll-track: rgba(255, 255, 255, 0.08);
+    --canvas-composer-scroll-thumb: rgba(255, 255, 255, 0.38);
+}
+
+html:not(.dark) .canvas-node-studio-surface,
+html:not(.dark) .canvas-image-settings-popover-segmented,
+html:not(.dark) .canvas-composer-picker-surface,
+html:not(.dark) .canvas-node-reference-menu {
+    --input-surface: var(--input-white);
+    --input-control: color-mix(in srgb, var(--fg) 5%, var(--input-white));
+    --input-option: var(--input-control);
+    --input-border: color-mix(in srgb, var(--fg) 14%, var(--input-white));
+    --input-selected: color-mix(in srgb, var(--fg) 9%, var(--input-white));
+    --input-selected-border: color-mix(in srgb, var(--fg) 36%, var(--input-white));
+    --input-text: var(--fg);
+    --input-muted: color-mix(in srgb, var(--fg) 60%, var(--input-white));
+    --input-action: var(--fg);
+    --input-action-text: var(--input-white);
+    --canvas-composer-scroll-track: color-mix(in srgb, var(--fg) 8%, transparent);
+    --canvas-composer-scroll-thumb: color-mix(in srgb, var(--fg) 38%, transparent);
+}
+
+.canvas-node-studio-surface {
+    --canvas-node-composer-height: 120px;
+    --canvas-node-composer-reference-height: 148px;
+    container-type: inline-size;
+    background: var(--canvas-composer-surface);
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.canvas-node-studio-composer {
+    --canvas-node-composer-height: 72px;
+    --canvas-node-composer-reference-height: 112px;
+    display: flex;
+    height: var(--canvas-composer-height);
+    max-height: min(var(--canvas-composer-height), calc(100dvh - 96px));
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-direction: column;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding: var(--canvas-composer-padding);
+    border-radius: var(--canvas-composer-radius);
+    border: var(--stroke-1) solid var(--canvas-composer-border);
+    background: var(--canvas-composer-surface);
+    box-shadow: var(--shadow-lg);
+}
+
+.canvas-node-studio-composer:has(> .canvas-node-studio-writing.is-reference-connected),
+.canvas-node-studio-composer:has(> .canvas-node-studio-writing.is-video-frames-open) {
+    height: var(--canvas-composer-reference-height);
+    max-height: min(var(--canvas-composer-reference-height), calc(100dvh - 96px));
+}
+
+.canvas-node-studio-composer:has(> .canvas-node-studio-writing.is-reference-connected.is-video-frames-open) {
+    height: var(--canvas-composer-frame-height);
+    max-height: min(var(--canvas-composer-frame-height), calc(100dvh - 96px));
+}
+
+html:not(.dark) .canvas-node-studio-composer {
+    box-shadow: var(--shadow-lg);
+}
+
+.canvas-node-studio-header {
+    min-width: 0;
+    min-height: 32px;
+    margin: 0 0 16px;
+    padding-block: 0;
+}
+
+.canvas-node-studio-composer > .canvas-node-studio-header {
+    margin-bottom: 12px;
+}
+
+.canvas-node-studio-header-inner {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.canvas-node-studio-tool-pill {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 32px;
+    padding: var(--space-1) var(--space-2);
+    border: var(--stroke-1) solid transparent;
+    border-radius: var(--canvas-composer-control-radius);
+    background: var(--canvas-composer-control);
+    color: var(--canvas-composer-muted);
+    font-size: var(--fs-body);
+    font-weight: 400;
+    line-height: 18px;
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.canvas-node-studio-tool-pill:hover {
+    background: var(--input-selected);
+    border-color: var(--input-selected-border);
+    color: var(--canvas-composer-text);
+}
+
+.canvas-node-studio-tool-pill.is-active {
+    border-color: var(--input-selected-border);
+    background: var(--input-selected);
+}
+
+.canvas-node-studio-tool-pill > svg {
+    width: var(--space-4);
+    height: var(--space-4);
+}
+
+.canvas-node-studio-icon-button,
+.canvas-node-studio-shortcut {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--canvas-composer-muted);
+}
+
+.canvas-node-studio-icon-button { cursor: pointer; }
+.canvas-node-studio-shortcut { cursor: help; }
+.canvas-node-studio-icon-button > svg,
+.canvas-node-studio-shortcut > svg { width: 18px; height: 18px; }
+.canvas-node-studio-icon-button:hover,
+.canvas-node-studio-shortcut:hover { background: var(--canvas-composer-control); }
+
+.canvas-node-studio-tool-pill:focus-visible,
+.canvas-node-studio-icon-button:focus-visible,
+.canvas-node-studio-shortcut:focus-visible {
+    outline: 2px solid var(--canvas-composer-text);
+    outline-offset: 3px;
+}
+
+.canvas-node-studio-writing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: auto;
+    min-width: 0;
+    box-sizing: border-box;
+    margin: 0 0 20px;
+    height: auto;
+    min-height: var(--canvas-node-composer-height);
+    max-height: none;
+    flex: 1 1 auto;
+    border: 0;
+    background: transparent;
+}
+
+.canvas-node-studio-composer > .canvas-node-studio-writing {
+    margin-bottom: 12px;
+}
+
+.canvas-node-studio-writing.is-reference-connected {
+    min-height: var(--canvas-node-composer-reference-height);
+}
+
+.canvas-node-studio-editor-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    height: 100%;
+    max-height: 100%;
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.canvas-node-studio-editor,
+.canvas-node-studio-editor-container > textarea,
+.canvas-node-studio-editor-container > [contenteditable="true"] {
+    min-height: 0;
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 6px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    outline: none;
+    box-shadow: none;
+}
+
+.canvas-node-studio-editor::placeholder {
+    color: var(--canvas-composer-muted);
+}
+
+.canvas-node-studio-expanded {
+    display: flex;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+    --canvas-node-composer-height: min(280px, 45dvh);
+}
+
+.canvas-prompt-editor-modal .canvas-prompt-editor-modal-body,
+.canvas-prompt-editor-modal .ant-modal-body {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.canvas-prompt-editor-modal .canvas-prompt-editor-modal-container,
+.canvas-prompt-editor-modal .ant-modal-container {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-header,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-dock {
+    flex: 0 0 auto;
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-writing {
+    min-height: 0;
+    max-height: none;
+    flex: 1 1 0%;
+    overflow: hidden;
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container {
+    display: flex;
+    width: 100%;
+    min-height: 0;
+    max-height: 100%;
+    flex: 1 1 0%;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container > textarea,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container > [contenteditable="true"] {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    flex: 1 1 auto;
+    max-height: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable both-edges;
+    scrollbar-color: var(--canvas-composer-scroll-thumb) var(--canvas-composer-scroll-track);
+    scrollbar-width: auto;
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor::-webkit-scrollbar,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container > textarea::-webkit-scrollbar,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container > [contenteditable="true"]::-webkit-scrollbar {
+    width: 10px;
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor::-webkit-scrollbar-track,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container > textarea::-webkit-scrollbar-track,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container > [contenteditable="true"]::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: var(--canvas-composer-scroll-track);
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor::-webkit-scrollbar-thumb,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container > textarea::-webkit-scrollbar-thumb,
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-editor-container > [contenteditable="true"]::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: var(--canvas-composer-scroll-thumb);
+    background-clip: padding-box;
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-writing.is-video-frames-open {
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+.canvas-prompt-editor-modal .canvas-node-studio-expanded .canvas-node-studio-writing.is-video-frames-open .canvas-node-studio-editor-container {
+    min-height: 0;
+    height: 100%;
+}
+
+.canvas-preset-picker-popover .canvas-composer-picker-surface {
+    padding: 0;
+    border: var(--stroke-1) solid var(--canvas-composer-border);
+    border-radius: var(--r-2xl);
+    background: var(--canvas-composer-surface);
+    box-shadow: var(--elevation-overlay);
+    overflow: hidden;
+    color: var(--canvas-composer-text);
+}
+
+.canvas-node-reference-menu {
+    width: min(calc(var(--space-20) * 4), calc(100vw - var(--space-6)));
+    padding: var(--space-3);
+    color: var(--canvas-composer-text);
+}
+
+.canvas-composer-picker-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-1) var(--space-1) var(--space-3);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+}
+.canvas-composer-picker-heading > span:last-child { color: var(--canvas-composer-muted); font-weight: 400; }
+.canvas-composer-picker-list {
+    max-height: min(calc(var(--space-20) * 4), 50dvh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--canvas-composer-scroll-thumb) transparent;
+}
+.canvas-composer-picker-list::-webkit-scrollbar { width: var(--space-1); }
+.canvas-composer-picker-list::-webkit-scrollbar-thumb { border-radius: var(--r-full); background: var(--canvas-composer-scroll-thumb); }
+.canvas-node-reference-menu-empty { margin: 0; padding: var(--space-3) var(--space-1); font-size: var(--fs-caption); line-height: 1.6; color: var(--canvas-composer-muted); }
+.canvas-node-reference-menu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2);
+    border: 0;
+    border-radius: var(--r-lg);
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    font-size: var(--fs-body);
+    cursor: pointer;
+    transition: background-color var(--motion-dur-fast) var(--motion-ease-out);
+}
+.canvas-node-reference-menu-item:hover { background: var(--canvas-composer-control); }
+.canvas-node-reference-menu-item:focus-visible,
+.canvas-preset-picker-option:focus-visible { outline: var(--stroke-2) solid var(--canvas-composer-muted); outline-offset: calc(-1 * var(--stroke-2)); }
+.canvas-node-reference-menu-preview { width: var(--space-10); height: var(--space-10); overflow: hidden; border-radius: var(--r-md); flex-shrink: 0; background: var(--canvas-composer-control); }
+.canvas-node-reference-menu-copy { display: grid; min-width: 0; flex: 1; gap: var(--space-1); }
+.canvas-node-reference-menu-copy > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.canvas-node-reference-menu-copy > small { font-size: var(--fs-caption); color: var(--canvas-composer-muted); }
+.canvas-node-reference-menu-hint { width: var(--space-4); height: var(--space-4); margin-left: auto; flex-shrink: 0; color: var(--canvas-composer-muted); }
+
+.canvas-settings-popover { filter: none; }
+.canvas-settings-popover-panel {
+    width: min(calc(var(--space-24) * 4), calc(100vw - var(--space-6)));
+    max-height: min(calc(var(--space-24) * 5), calc(100dvh - var(--space-6)));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.canvas-settings-default-trigger {
+    height: var(--space-8);
+    max-width: calc(var(--space-20) * 2 + var(--space-5));
+    justify-content: flex-start;
+    border-radius: var(--r-full);
+    padding-inline: var(--space-2-half);
+}
+
+.canvas-image-settings-chevron { flex-shrink: 0; }
+.canvas-image-settings-dot {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--canvas-composer-status, var(--status-success));
+}
+
+/* 画布图像设置采用分组面板语言；只挂在专用 variant，避免影响普通设置面板。 */
+.canvas-image-settings-popover-segmented {
+    --studio-accent: var(--creation-accent, var(--workspace-accent, var(--status-loading)));
+    --studio-text: var(--creation-text, var(--fg));
+    --studio-muted: var(--creation-muted, color-mix(in srgb, var(--fg) 58%, transparent));
+    box-sizing: border-box;
+    border-radius: 16px;
+    padding: 20px;
+    background: var(--canvas-composer-surface);
+    border: 1px solid var(--canvas-composer-divider);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--studio-text) 24%, transparent) transparent;
+}
+
+.canvas-image-settings-popover-segmented::-webkit-scrollbar {
+    width: 6px;
+}
+
+.canvas-image-settings-popover-segmented::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--studio-text) 24%, transparent);
+}
+
+.canvas-image-settings-panel {
+    display: grid;
+    width: 100%;
+    gap: 20px;
+}
+
+.canvas-video-settings-panel {
+    --video-settings-selected: var(--input-selected);
+    --video-settings-option: var(--input-option);
+    --video-settings-accent: var(--input-selected-border);
+}
+
+.canvas-video-settings-panel .video-setting-group {
+    display: grid;
+    gap: 10px;
+}
+
+.canvas-video-settings-panel .video-setting-group > * { margin-block: 0; }
+.canvas-video-settings-panel .video-setting-label { font-size: 13px; font-weight: 400; line-height: 1.4; }
+.canvas-video-settings-panel .video-setting-options { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.canvas-video-settings-panel .video-setting-aspect-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+
+.canvas-video-settings-panel .video-setting-option,
+.canvas-video-settings-panel .video-setting-aspect {
+    min-height: 36px;
+    height: auto;
+    padding: 8px;
+    border: 1px solid var(--canvas-composer-border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.canvas-video-settings-panel .video-setting-aspect,
+.canvas-video-settings-panel .video-setting-aspect-grid .video-setting-option {
+    display: flex;
+    aspect-ratio: 1;
+    min-height: 56px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 2px;
+    font-size: 12px;
+}
+
+.canvas-video-settings-panel button[aria-pressed="true"],
+.canvas-video-settings-panel button:hover:not(:disabled) { border-color: var(--input-selected-border); }
+.canvas-video-settings-panel button:focus-visible { outline: 2px solid var(--canvas-composer-text); outline-offset: 2px; }
+.canvas-video-settings-panel .video-setting-dimensions { gap: 8px; }
+.canvas-video-settings-panel .video-setting-dimension { height: 36px; border: 1px solid var(--canvas-composer-border); border-radius: 8px; }
+.canvas-video-settings-panel .video-setting-size-preview { border-radius: 2px; border-width: 1.5px; }
+
+.canvas-image-settings-title {
+    color: var(--studio-text);
+    font-size: var(--fs-body);
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.canvas-image-setting-section {
+    display: grid;
+    gap: 10px;
+}
+
+.canvas-image-setting-label {
+    color: var(--studio-muted);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.canvas-image-setting-grid {
+    display: grid;
+    min-width: 0;
+    gap: 8px;
+}
+
+.canvas-image-setting-grid-quality,
+.canvas-image-setting-grid-background {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.canvas-image-setting-grid-aspect {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.canvas-image-setting-grid-count {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.canvas-image-setting-option,
+.canvas-image-setting-aspect,
+.canvas-image-count-input {
+    min-width: 0;
+    box-sizing: border-box;
+    border: 1px solid var(--canvas-composer-border);
+    border-radius: 8px;
+    background: var(--input-option);
+    color: var(--canvas-composer-text);
+    font-size: 13px;
+    font-weight: 400;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease,
+        transform 160ms ease;
+}
+
+.canvas-image-setting-option {
+    display: grid;
+    min-height: 36px;
+    place-items: center;
+    cursor: pointer;
+    padding: 8px 16px;
+}
+
+.canvas-image-setting-option:hover,
+.canvas-image-setting-aspect:hover,
+.canvas-image-count-input:hover {
+    border-color: var(--input-selected-border);
+    background: var(--canvas-composer-control);
+}
+
+.canvas-image-setting-option:active,
+.canvas-image-setting-aspect:active {
+    transform: translateY(1px);
+}
+
+.canvas-image-setting-option.is-selected,
+.canvas-image-setting-aspect.is-selected {
+    border-color: var(--input-selected-border);
+    background: var(--input-selected);
+    color: var(--canvas-composer-text);
+}
+
+.canvas-image-setting-option:focus-visible,
+.canvas-image-setting-aspect:focus-visible,
+.canvas-image-count-input:focus-within {
+    outline: 2px solid color-mix(in srgb, var(--studio-accent) 68%, transparent);
+    outline-offset: 2px;
+}
+
+.canvas-image-setting-aspect {
+    display: flex;
+    min-height: 56px;
+    aspect-ratio: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 2px;
+    text-align: center;
+}
+
+.canvas-image-setting-aspect > span:last-child {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.canvas-image-setting-aspect-icon {
+    display: grid;
+    width: 26px;
+    height: 24px;
+    place-items: center;
+}
+
+.canvas-image-setting-aspect-icon > span {
+    display: block;
+    max-width: 22px;
+    max-height: 22px;
+    border-width: 1.5px;
+    border-radius: 2px;
+}
+
+.canvas-image-dimension-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 5px;
+}
+
+.canvas-image-dimension-input {
+    display: flex;
+    min-width: 0;
+    height: 32px;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 20%, transparent);
+    border-radius: 10px;
+    font-size: var(--fs-label);
+}
+
+.canvas-image-dimension-input > span {
+    display: grid;
+    width: 28px;
+    height: 100%;
+    flex: 0 0 auto;
+    place-items: center;
+    border-right: 1px solid color-mix(in srgb, var(--studio-text) 12%, transparent);
+    color: var(--studio-muted);
+    font-size: var(--fs-label);
+    font-weight: 700;
+}
+
+.canvas-image-dimension-input > input {
+    min-width: 0;
+    height: 100%;
+    font-size: var(--fs-label);
+}
+
+.canvas-image-count-input {
+    display: flex;
+    min-height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+}
+
+.canvas-image-count-input > input {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    text-align: center;
+    font-size: var(--fs-label);
+}
+
+.canvas-reference-shelf {
+    display: flex;
+    min-width: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 64px;
+    flex: 0 0 64px;
+    align-items: flex-start;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0;
+}
+
+.canvas-reference-card {
+    position: relative;
+    display: block;
+    width: 64px;
+    height: 64px;
+    flex: 0 0 auto;
+}
+
+.canvas-reference-card-button {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 10%, transparent);
+    border-radius: 8px;
+    padding: 0;
+    color: var(--studio-text);
+    text-align: left;
+    transition: transform 160ms ease, filter 160ms ease;
+}
+
+.canvas-reference-card-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.canvas-reference-card-button.is-previewable {
+    cursor: zoom-in;
+}
+
+.canvas-reference-thumbnail {
+    display: block;
+    width: 100%;
+    height: 100%;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border-radius: 7px;
+}
+
+.canvas-reference-label {
+    display: none;
+}
+
+.canvas-reference-index,
+.canvas-reference-remove {
+    position: absolute;
+    display: grid;
+    width: 18px;
+    height: 18px;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .68);
+    color: #fff;
+    line-height: 1;
+}
+
+.canvas-reference-index {
+    top: 4px;
+    left: 4px;
+    border-radius: 4px;
+    font-size: var(--fs-micro);
+    font-weight: 700;
+}
+
+.canvas-reference-remove {
+    top: 3px;
+    right: 3px;
+    border: 0;
+    cursor: pointer;
+    transition: background 160ms ease;
+}
+
+.canvas-reference-remove:hover {
+    background: var(--status-error);
+}
+
+.canvas-inline-reference {
+    display: inline-flex;
+    max-width: 13rem;
+    height: 1.9em;
+    align-items: center;
+    gap: .35em;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--studio-text) 12%, transparent);
+    border-radius: .42em;
+    padding: .16em .38em;
+    vertical-align: baseline;
+}
+
+.canvas-inline-reference-image {
+    width: 1.45em;
+    height: 1.45em;
+    flex: 0 0 auto;
+    border-radius: .28em;
+    object-fit: cover;
+}
+
+.canvas-inline-reference-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.canvas-video-frame-slots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 126px;
+    min-width: 0;
+    flex: 0 0 126px;
+}
+
+.canvas-node-studio-writing.is-video-frames-open,
+.studio-canvas-writing.is-video-frames-open {
+    display: grid;
+    grid-template-columns: 126px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 12px;
+}
+
+.canvas-node-studio-writing.is-video-frames-open .canvas-reference-shelf {
+    grid-column: 1 / -1;
+}
+
+.canvas-node-studio-writing.is-video-frames-open .canvas-video-frame-slots,
+.studio-canvas-writing.is-video-frames-open .canvas-video-frame-slots {
+    grid-column: 1;
+    align-self: start;
+}
+
+.canvas-node-studio-writing.is-video-frames-open .canvas-node-studio-editor-container,
+.studio-canvas-writing.is-video-frames-open > .studio-canvas-editor {
+    grid-column: 2;
+    min-width: 0;
+}
+
+.canvas-video-frame-card {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--canvas-composer-border);
+    border-radius: 10px;
+    background: var(--canvas-composer-control);
+    color: var(--canvas-composer-text);
+}
+
+.canvas-video-frame-card-main {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 74px;
+    align-items: center;
+    gap: 5px;
+    flex-direction: column;
+    justify-content: center;
+    border: 0;
+    padding: 6px 4px;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.canvas-video-frame-card-main:hover {
+    background: var(--input-selected);
+}
+
+.canvas-video-frame-preview,
+.canvas-video-frame-empty {
+    display: grid;
+    width: 50px;
+    height: 50px;
+    flex: 0 0 50px;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--canvas-composer-text) 8%, transparent);
+    object-fit: cover;
+}
+
+.canvas-video-frame-empty {
+    border: 1px dashed color-mix(in srgb, var(--canvas-composer-text) 26%, transparent);
+    color: var(--canvas-composer-muted);
+}
+
+.canvas-video-frame-empty > svg {
+    width: 20px;
+    height: 20px;
+}
+
+.canvas-video-frame-copy {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+    width: 100%;
+    text-align: center;
+}
+
+.canvas-video-frame-copy strong {
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.canvas-video-frame-copy small {
+    overflow: hidden;
+    color: var(--canvas-composer-muted);
+    font-size: 11px;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.canvas-video-frame-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: grid;
+    width: 20px;
+    height: 20px;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .62);
+    color: #fff;
+    cursor: pointer;
+    opacity: .9;
+    transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.canvas-video-frame-remove:hover {
+    background: var(--status-error);
+    transform: scale(1.05);
+}
+
+.canvas-video-frame-remove > svg {
+    width: 12px;
+    height: 12px;
+}
+
+.canvas-video-frame-loading {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    animation: canvas-video-frame-spin 900ms linear infinite;
+    color: var(--canvas-composer-muted);
+}
+
+.canvas-video-frame-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+@keyframes canvas-video-frame-spin {
+    to { transform: rotate(360deg); }
+}
+
+.canvas-node-studio-params {
+    min-width: 0;
+    margin: 0 0 16px;
+}
+
+.canvas-node-studio-dock {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    min-height: 56px;
+    margin-top: 0;
+    border-top: 0;
+    padding: var(--space-2) 0 0;
+}
+
+.canvas-node-studio-composer > .canvas-node-studio-dock {
+    min-height: 48px;
+    padding-top: 8px;
+}
+
+.canvas-node-studio-controls {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    justify-content: space-between;
+}
+
+.canvas-node-studio-options {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    align-items: center;
+    gap: 6px;
+}
+
+.canvas-node-studio-divider {
+    width: 1px;
+    height: 20px;
+    flex: 0 0 auto;
+    background: var(--canvas-composer-border);
+}
+
+.canvas-node-studio-model {
+    flex: 0 1 auto;
+    max-width: 200px;
+    min-width: 0;
+}
+
+.canvas-node-studio-model .canvas-composer-model-picker {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.canvas-node-studio-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    max-width: 100%;
+    min-width: 0;
+    overflow: visible;
+}
+
+.canvas-node-studio-settings {
+    position: relative;
+    max-width: 220px !important;
+    min-width: 0 !important;
+    height: 36px !important;
+    justify-content: flex-start !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    box-shadow: none !important;
+}
+
+.canvas-node-studio-settings > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.canvas-node-studio-controls .canvas-composer-model-picker {
+    height: 36px !important;
+    border-radius: 8px !important;
+    padding-inline: 10px !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+}
+
+.canvas-node-studio-controls .studio-composer-submit-stack {
+    min-width: 0;
+    gap: 10px;
+}
+
+.canvas-node-studio-controls .studio-composer-submit-stack.is-canvas {
+    flex: 0 0 auto;
+}
+
+.canvas-node-studio-controls .canvas-composer-model-picker,
+.canvas-node-studio-controls .canvas-node-studio-settings {
+    border-color: transparent !important;
+    background: transparent !important;
+    color: var(--canvas-composer-text) !important;
+    box-shadow: none !important;
+}
+
+.canvas-node-studio-controls .canvas-composer-model-picker:hover,
+.canvas-node-studio-controls .canvas-node-studio-settings:hover {
+    background: var(--canvas-composer-control) !important;
+}
+
+.canvas-node-studio-controls .canvas-node-studio-send {
+    display: inline-flex;
+    width: var(--space-10);
+    height: var(--space-10);
+    min-width: var(--space-10);
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--r-lg);
+    background: var(--canvas-composer-send);
+    color: var(--canvas-composer-send-text);
+    box-shadow: none;
+    transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.canvas-node-studio-controls .canvas-node-studio-send:hover:not(:disabled) {
+    background: var(--canvas-composer-send);
+    color: var(--canvas-composer-send-text);
+    transform: scale(1.05);
+}
+
+.canvas-node-studio-controls .canvas-node-studio-send.ant-btn:disabled {
+    background: var(--canvas-composer-send);
+    color: var(--canvas-composer-send-text);
+    opacity: .35;
+    cursor: not-allowed;
+}
+.canvas-node-studio-controls .canvas-node-studio-send.is-running { background: var(--status-error); color: var(--input-white); }
+.canvas-node-studio-default-hint { color: var(--canvas-composer-muted); font-size: 13px; }
+
+@container (max-width: 560px) {
+    .canvas-node-studio-options { flex-basis: 100%; }
+    .canvas-node-studio-model { max-width: 50%; }
+    .canvas-node-studio-settings { max-width: 100% !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .canvas-node-studio-controls .canvas-node-studio-send:hover:not(:disabled) { transform: none; }
+}
+
+.studio-generation-cost {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 999px;
+    padding-inline: 6px;
+    transition: color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.studio-generation-cost::after {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: -55%;
+    width: 42%;
+    background: linear-gradient(100deg, transparent, color-mix(in srgb, currentColor 22%, transparent), transparent);
+    content: "";
+    opacity: 0;
+    transform: skewX(-18deg);
+}
+
+.studio-generation-cost.is-exact::after,
+.studio-generation-cost.is-usage::after {
+    animation: studio-credit-shimmer 3.2s ease-in-out infinite;
+}
+
+.studio-generation-cost.is-exact {
+    background: color-mix(in srgb, #9c72ff 11%, transparent);
+    color: color-mix(in srgb, #c4a7ff 88%, var(--studio-text));
+}
+
+.studio-generation-cost.is-unavailable,
+.studio-generation-cost.is-unconfigured {
+    background: color-mix(in srgb, var(--status-warning) 10%, transparent);
+}
+
+.studio-generation-cost-symbol {
+    transition: transform 180ms ease, filter 180ms ease;
+}
+
+.studio-generation-cost.is-exact .studio-generation-cost-symbol {
+    filter: drop-shadow(0 0 5px color-mix(in srgb, #9c72ff 55%, transparent));
+}
+
+.studio-generation-cost.is-exact:hover .studio-generation-cost-symbol,
+.studio-generation-cost.is-usage:hover .studio-generation-cost-symbol {
+    transform: scale(1.12) rotate(-8deg);
+}
+
+.canvas-credit-balance {
+    position: relative;
+    overflow: hidden;
+}
+
+.canvas-credit-balance::after {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, .18) 48%, transparent 76%);
+    content: "";
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-120%);
+}
+
+.canvas-credit-balance[data-credit-state="refreshing"]::after,
+.canvas-credit-balance[data-credit-state="ready"]:hover::after {
+    opacity: 1;
+    animation: studio-credit-shimmer 2.4s ease-in-out infinite;
+}
+
+.canvas-credit-balance[data-credit-state="low"] {
+    border-color: color-mix(in srgb, var(--status-warning) 50%, var(--canvas-toolbar-border, transparent));
+    color: var(--status-warning) !important;
+}
+
+.canvas-credit-balance[data-credit-state="empty"] {
+    border-color: color-mix(in srgb, var(--status-error) 48%, var(--canvas-toolbar-border, transparent));
+    color: var(--status-error) !important;
+}
+
+@keyframes studio-credit-shimmer {
+    0%, 55% { opacity: 0; transform: translateX(-120%) skewX(-18deg); }
+    68% { opacity: 1; }
+    100% { opacity: 0; transform: translateX(300%) skewX(-18deg); }
+}
+
+/* 画布顶部积分入口与首页共用同一条绿色扫光，保持两个工作区的视觉节奏一致。 */
+.canvas-credit-balance.workspace-top-wallet::after {
+    top: 1px;
+    right: auto;
+    bottom: 1px;
+    left: -58%;
+    width: 52%;
+    border-radius: inherit;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--status-success) 25%, transparent),
+        color-mix(in srgb, var(--foreground) 17%, transparent),
+        transparent
+    );
+    opacity: .72;
+    transform: translateX(0);
+    animation: workspace-credit-energy 4.8s var(--motion-ease-linear) infinite;
+}
+
+.canvas-credit-balance.workspace-top-wallet:hover::after {
+    opacity: .92;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .canvas-credit-balance.workspace-top-wallet::after {
+        left: 24%;
+        animation: none;
+        opacity: .5;
+        transform: none;
+    }
+}
+
+.no-motion .canvas-credit-balance.workspace-top-wallet::after {
+    left: 24%;
+    animation: none;
+    opacity: .5;
+    transform: none;
+}
+
+@media (max-width: 720px) {
+    .studio-composer {
+        border-radius: 20px;
+        box-shadow: 0 18px 46px rgba(0, 0, 0, 0.2);
+    }
+
+    .studio-canvas-composer {
+        width: calc(100vw - 16px);
+        max-width: calc(100vw - 16px);
+        border-radius: 16px;
+    }
+
+    .canvas-node-studio-composer {
+        height: min(468px, calc(100dvh - 32px));
+        width: 100%;
+        max-width: 100%;
+        border-radius: 16px;
+        padding: 16px;
+    }
+
+    .canvas-node-studio-header {
+        min-height: 32px;
+    }
+
+    .canvas-node-studio-writing {
+        margin-inline: 0;
+    }
+
+    .canvas-node-studio-dock {
+        padding-inline: 0;
+    }
+
+    .canvas-node-studio-controls {
+        gap: 6px;
+    }
+
+    .canvas-node-studio-tool-pill {
+        padding-inline: 10px;
+    }
+
+    .studio-composer-tabs {
+        gap: 2px;
+        margin-inline: 8px;
+        overflow-x: auto;
+        padding-bottom: 3px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .studio-composer-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .studio-composer-link {
+        display: none;
+    }
+
+    .studio-composer-tab,
+    .studio-skill-trigger {
+        min-height: 44px;
+        flex: 0 0 auto;
+    }
+
+    .studio-composer-tab {
+        height: 44px;
+        padding-inline: 10px;
+        font-size: var(--fs-label);
+    }
+
+    .studio-composer-badge {
+        height: 18px;
+        padding-inline: 4px;
+        font-size: 10px;
+    }
+
+    .studio-skill-trigger {
+        height: 38px;
+        align-self: center;
+        padding-inline: 9px;
+    }
+
+    .studio-skill-trigger span {
+        display: inline;
+        max-width: 86px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .studio-composer-writing {
+        min-height: 142px;
+        grid-template-columns: 76px minmax(0, 1fr);
+        gap: 10px;
+        padding: 12px 12px 6px;
+    }
+
+    .studio-composer-reference {
+        min-height: 96px;
+        align-self: start;
+        border-radius: 12px;
+        padding: 7px 5px;
+    }
+
+    .studio-composer-reference small {
+        display: none;
+    }
+
+    .studio-composer-reference strong {
+        font-size: var(--fs-tiny);
+    }
+
+    .studio-composer-reference-preview,
+    .studio-composer-uploading {
+        width: 42px;
+        height: 42px;
+    }
+
+    .studio-composer-editor {
+        min-height: 106px;
+    }
+
+    .studio-composer .creation-chat-mention-container,
+    .studio-composer .creation-chat-mention-editor,
+    .studio-composer .creation-chat-editor textarea {
+        min-height: 106px;
+        max-height: 190px;
+        font-size: 15px;
+        line-height: 1.62;
+    }
+
+    .studio-composer-dock {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 5px;
+        min-height: 0;
+        align-items: stretch;
+        border-top: 1px solid color-mix(in srgb, var(--studio-text) 9%, transparent);
+        padding: 7px 10px calc(10px + env(safe-area-inset-bottom));
+    }
+
+    .studio-composer-tools {
+        width: 100%;
+        max-width: 100%;
+        min-height: 42px;
+        max-height: none;
+        flex-wrap: nowrap;
+        gap: 3px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 1px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .studio-composer-tools::-webkit-scrollbar {
+        display: none;
+    }
+
+    .studio-composer-tool,
+    .studio-composer .creation-chat-control,
+    .studio-composer .canvas-composer-model-picker {
+        min-height: 40px;
+        flex: 0 0 auto;
+    }
+
+    .studio-composer-tool {
+        width: 40px;
+        height: 40px !important;
+        padding: 0 !important;
+    }
+
+    .studio-composer .creation-chat-control {
+        height: 40px !important;
+        padding-inline: 9px !important;
+    }
+
+    .studio-composer .creation-chat-control > span {
+        display: inline;
+        max-width: 84px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .studio-composer .creation-chat-control.is-mode > span {
+        max-width: 72px;
+    }
+
+    .studio-composer .creation-model-picker.canvas-composer-model-picker {
+        width: 154px !important;
+        height: 40px !important;
+        flex: 0 0 154px;
+    }
+
+    .studio-composer-actions {
+        min-height: 44px;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .studio-composer-submit,
+    .studio-composer-stop {
+        width: 44px;
+        height: 44px;
+    }
+
+    .studio-generation-cost {
+        min-height: 40px;
+        padding-inline: 2px;
+        font-size: var(--fs-label);
+    }
+
+    .studio-composer-submit-stack {
+        height: 44px;
+        gap: 7px;
+    }
+
+    .studio-document-strip {
+        max-height: 58px;
+        overflow-y: auto;
+    }
+
+    .creation-model-picker-menu {
+        width: min(344px, calc(100vw - 20px)) !important;
+    }
+
+    .creation-chat-composer.studio-composer {
+        width: 100%;
+        min-height: 146px;
+        max-height: min(292px, calc(100dvh - 24px));
+        border-radius: 19px;
+    }
+
+    .creation-chat-composer.studio-composer .studio-composer-writing {
+        min-height: 88px;
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 8px;
+        padding: 12px 9px 2px;
+    }
+
+    .creation-chat-composer.studio-composer .studio-composer-reference {
+        width: 42px;
+        min-height: 58px;
+        padding: 5px;
+    }
+
+    .creation-chat-composer.studio-composer .studio-composer-reference-preview,
+    .creation-chat-composer.studio-composer .studio-composer-uploading {
+        width: 32px;
+        height: 46px;
+    }
+
+    .creation-chat-composer.studio-composer .studio-composer-editor,
+    .creation-chat-composer.studio-composer .creation-chat-mention-container,
+    .creation-chat-composer.studio-composer .creation-chat-mention-editor,
+    .creation-chat-composer.studio-composer .creation-chat-editor textarea {
+        min-height: 0;
+    }
+
+    .creation-chat-composer.studio-composer .studio-composer-dock {
+        padding: 5px 9px calc(8px + env(safe-area-inset-bottom)) 65px;
+    }
+
+    .creation-chat-composer.studio-composer .studio-composer-tools {
+        max-height: none;
+        padding-bottom: 0;
+    }
+
+    .creation-chat-composer.studio-composer .creation-model-picker.canvas-composer-model-picker {
+        width: 140px !important;
+        flex-basis: 140px;
+    }
+
+    .creation-chat-composer.studio-composer .studio-composer-actions {
+        min-height: 40px;
+    }
+
+    .creation-duration-slider-popover {
+        width: min(390px, calc(100vw - 28px));
+        padding: 17px 18px 16px;
+    }
+
+    .creation-duration-picker {
+        grid-template-columns: minmax(0, 1fr) 86px;
+        gap: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .studio-composer *,
+    .creation-model-picker-menu * {
+        transition: none !important;
+    }
+}

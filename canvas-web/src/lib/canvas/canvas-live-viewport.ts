@@ -1,0 +1,57 @@
+import type { SelectionBox, ViewportTransform } from "@/types/canvas";
+
+export const CANVAS_VIEWPORT_PREVIEW_EVENT = "canvas:viewport-preview";
+export const CANVAS_GRAPHICS_VIEWPORT_PREVIEW_EVENT = "canvas:graphics-viewport-preview";
+export const CANVAS_SELECTION_PREVIEW_EVENT = "canvas:selection-preview";
+const headerScales = new WeakMap<HTMLDivElement, number>();
+
+export function applyCanvasLiveViewport(container: HTMLDivElement | null, viewport: ViewportTransform, notify = true) {
+    if (!container) return;
+    const gridSize = 48 * viewport.k;
+    const committedScale = Number(container.style.getPropertyValue("--canvas-committed-scale")) || viewport.k;
+    // 高频位移只写合成层；根节点的继承变量会让所有媒体和浮层逐帧重算样式。
+    const world = container.querySelector<HTMLElement>(":scope > [data-canvas-world-layer]");
+    if (world) world.style.transform = `translate3d(${viewport.x}px, ${viewport.y}px, 0) scale(${viewport.k / committedScale})`;
+    const grid = container.querySelector<HTMLElement>(":scope > [data-canvas-grid-layer]");
+    if (grid) {
+        grid.style.setProperty("--canvas-grid-size", `${gridSize}px`);
+        grid.style.setProperty("--canvas-dot-size", viewport.k < 0.12 ? "0.8px" : "1.15px");
+        grid.style.transform = `translate3d(${viewport.x % gridSize}px, ${viewport.y % gridSize}px, 0)`;
+    }
+    if (headerScales.get(container) !== viewport.k) {
+        const inverseScale = 1 / Math.max(viewport.k, 0.05);
+        container.querySelectorAll<HTMLElement>(".canvas-node-external-header").forEach((header) => {
+            header.style.transform = `scale(${inverseScale})`;
+        });
+        headerScales.set(container, viewport.k);
+    }
+    // 图形层必须逐帧跟随 DOM 世界层；浮层和滚动通知仍可按原频率节流。
+    container.dispatchEvent(new CustomEvent<ViewportTransform>(CANVAS_GRAPHICS_VIEWPORT_PREVIEW_EVENT, { detail: viewport }));
+    if (notify) {
+        container.dispatchEvent(new CustomEvent<ViewportTransform>(CANVAS_VIEWPORT_PREVIEW_EVENT, { detail: viewport }));
+        // Ant Design overlays watch scrollable ancestors, but CSS transforms do not emit layout events.
+        container.dispatchEvent(new Event("scroll"));
+    }
+}
+
+export function subscribeCanvasGraphicsViewportPreview(container: HTMLDivElement, listener: (viewport: ViewportTransform) => void) {
+    const handlePreview = (event: Event) => listener((event as CustomEvent<ViewportTransform>).detail);
+    container.addEventListener(CANVAS_GRAPHICS_VIEWPORT_PREVIEW_EVENT, handlePreview);
+    return () => container.removeEventListener(CANVAS_GRAPHICS_VIEWPORT_PREVIEW_EVENT, handlePreview);
+}
+
+export function subscribeCanvasViewportPreview(container: HTMLDivElement, listener: (viewport: ViewportTransform) => void) {
+    const handlePreview = (event: Event) => listener((event as CustomEvent<ViewportTransform>).detail);
+    container.addEventListener(CANVAS_VIEWPORT_PREVIEW_EVENT, handlePreview);
+    return () => container.removeEventListener(CANVAS_VIEWPORT_PREVIEW_EVENT, handlePreview);
+}
+
+export function applyCanvasSelectionPreview(container: HTMLDivElement | null, selection: SelectionBox) {
+    container?.dispatchEvent(new CustomEvent<SelectionBox>(CANVAS_SELECTION_PREVIEW_EVENT, { detail: selection }));
+}
+
+export function subscribeCanvasSelectionPreview(container: HTMLDivElement, listener: (selection: SelectionBox) => void) {
+    const handlePreview = (event: Event) => listener((event as CustomEvent<SelectionBox>).detail);
+    container.addEventListener(CANVAS_SELECTION_PREVIEW_EVENT, handlePreview);
+    return () => container.removeEventListener(CANVAS_SELECTION_PREVIEW_EVENT, handlePreview);
+}

@@ -1,0 +1,296 @@
+/**
+ * @doubao-studio/contracts — 任务 IPC DTO
+ *
+ * 任务调度 IPC 的参数和返回值类型。
+ * 复用 domain 中的领域模型，不引入运行时值。
+ */
+
+import type {
+  Task,
+  TaskErrorInfo,
+  TaskRunSnapshot,
+  TaskArtifact,
+} from '../domain';
+import type {
+  GenerationMode,
+  AccountPlatform,
+  TaskStatus,
+} from '../enums';
+
+// ==================== 通用返回值 ====================
+
+/** 任务操作简单结果（无数据返回） */
+export interface TaskOperationResult {
+  success: boolean;
+  error?: string;
+}
+
+/** 任务操作结果（包含任务数据） */
+export interface TaskResult {
+  success: boolean;
+  task?: Task;
+  error?: string;
+}
+
+/** 任务批量创建结果 */
+export interface TaskAddResult {
+  success: boolean;
+  tasks?: Task[];
+  error?: string;
+}
+
+// ==================== IPC 参数 DTO ====================
+
+export interface TaskAddParams {
+  prompts: string[];
+  targetPlatform?: AccountPlatform;
+  mode?: GenerationMode;
+  videoConfig?: Task['videoConfig'];
+  attachments?: string[];
+  referenceVideos?: string[];
+  audioAttachment?: string;
+  audioAttachments?: string[];
+  projectId?: string;
+}
+
+export interface TaskAssignParams {
+  taskId: string;
+  accountId: string;
+}
+
+export interface TaskUpdateStatusParams {
+  taskId: string;
+  status: TaskStatus;
+  result?: string;
+  outputs?: string[];
+}
+
+/** 将已下载或人工提取的单个地址登记到现有任务产物中。 */
+export interface TaskRegisterArtifactParams {
+  taskId: string;
+  url: string;
+  source?: TaskArtifact['source'];
+  conversationUrl?: string;
+  runId?: string;
+  /** 下载响应的可信媒体类型；用于视频任务中的封面/海报分类。 */
+  kind?: TaskArtifact['kind'];
+  contentType?: string;
+  contentLength?: number;
+  statusCode?: number;
+}
+
+export interface TaskUpdateRuntimeParams {
+  taskId: string;
+  status?: TaskStatus;
+  runtime?: Partial<TaskRunSnapshot>;
+  errorInfo?: TaskErrorInfo | null;
+  result?: string;
+}
+
+export interface TaskAcquireLockParams {
+  taskId: string;
+  ownerId: string;
+}
+
+export interface TaskRenewLockParams {
+  taskId: string;
+  ownerId: string;
+}
+
+export interface TaskReleaseLockParams {
+  taskId: string;
+  ownerId: string;
+}
+
+export interface TaskImportCsvParams {
+  projectId?: string;
+  /** 拖放导入时由 preload 安全解析出的本地 CSV 路径；省略时打开文件选择器。 */
+  filePath?: string;
+}
+
+/** 编辑并重新运行任务时可更新的完整输入 */
+export interface TaskUpdateInput {
+  prompt: string;
+  videoConfig?: Task['videoConfig'];
+  attachments?: string[];
+  referenceVideos?: string[];
+  audioAttachment?: string;
+  audioAttachments?: string[];
+}
+
+export interface TaskUpdateParams {
+  taskId: string;
+  updates: TaskUpdateInput;
+}
+
+export interface TaskIdParams {
+  taskId: string;
+}
+
+/**
+ * 额度明确耗尽后的受控改派/重排队参数。
+ * replacementAccountId 为空时保留原账号，任务等待该账号在次日刷新额度后继续。
+ */
+export interface TaskRetryAfterQuotaExhaustionParams {
+  taskId: string;
+  expectedRunId: string;
+  replacementAccountId?: string | null;
+}
+
+/**
+ * 提交前账号异常后的受控改派/重排队参数。
+ * 仅允许在本次运行尚未留下 submittedAt 且没有产物时使用，避免重复发送。
+ */
+export interface TaskRetryAfterPreSubmitFailureParams {
+  taskId: string;
+  expectedRunId: string;
+  replacementAccountId: string;
+}
+
+// ==================== CSV 导入 ====================
+
+/** CSV 批量导入结果 */
+export interface CsvImportResult {
+  success: boolean;
+  tasks?: Task[];
+  batchId?: string;
+  imported?: number;
+  skipped?: number;
+  errors?: string[];
+  error?: string;
+}
+
+// ==================== 已完成产物 ====================
+
+/** 已完成任务的产物摘要 */
+export interface CompletedOutput {
+  taskId: string;
+  prompt: string;
+  outputs: string[];
+  accountId: string | null;
+  mode: GenerationMode;
+}
+
+export interface TaskDownloadOutputsParams {
+  outputs: CompletedOutput[];
+  saveDir?: string;
+}
+
+export interface TaskDownloadOutputsResult {
+  success: boolean;
+  count: number;
+  failed: number;
+  saveDir?: string;
+  error?: string;
+  /** 仅包含下载完成且已成功登记到正式任务的下载记录 ID。 */
+  jobIds?: string[];
+}
+
+/** 公开分享页媒体下载：不使用账号 Cookie，只接受豆包页面实际公开声明的媒体流。 */
+export interface PublicShareMediaDownloadResult {
+  success: boolean;
+  count: number;
+  saveDir?: string;
+  sourceHost?: string;
+  contentType?: string;
+  contentLength?: number;
+  error?: string;
+}
+
+// ==================== 文件选择 ====================
+
+export interface FileSelectResult {
+  success: boolean;
+  filePaths?: string[];
+  error?: string;
+}
+
+export interface AudioSelectResult {
+  success: boolean;
+  filePath?: string;
+  error?: string;
+}
+
+export interface ReadFileAsBase64Result {
+  success: boolean;
+  data?: string;
+  error?: string;
+}
+
+/** Chromium 兼容视频预览结果；data 为仅供渲染进程使用的 data URL。 */
+export interface PrepareVideoPreviewResult {
+  success: boolean;
+  data?: string;
+  filePath?: string;
+  error?: string;
+}
+
+export interface SelectSaveDirResult {
+  success: boolean;
+  dirPath?: string;
+  error?: string;
+}
+
+// ==================== 产物验证 ====================
+
+export interface TaskValidateArtifactParams {
+  taskId: string;
+  artifactId: string;
+}
+
+export interface TaskValidateArtifactResult {
+  success: boolean;
+  artifact?: TaskArtifact;
+  error?: string;
+}
+
+// ==================== 适配器 ====================
+
+export interface TaskSaveAdapterReportParams {
+  accountId: string;
+  report: Record<string, any>;
+}
+
+export interface TaskSelectAdapterRulesResult {
+  success: boolean;
+  bundle?: Record<string, any>;
+  error?: string;
+}
+
+/** 适配器自检单项 */
+export interface AdapterSelfCheckItem {
+  key: string;
+  label: string;
+  ok: boolean;
+  detail: string;
+}
+
+/** 适配器自检报告 */
+export interface AdapterSelfCheckReport {
+  adapterVersion: string;
+  pageUrl: string;
+  checkedAt: string;
+  score: number;
+  items: AdapterSelfCheckItem[];
+}
+
+/** 适配器规则包 */
+export interface AdapterRuleBundle {
+  version: string;
+  createdAt: string;
+  rules: {
+    input: string[];
+    submit: string[];
+    dialogs: string[];
+    uploads: string[];
+    media: string[];
+  };
+}
+
+// ==================== 诊断导出 ====================
+
+export interface ExportDiagnosticsResult {
+  success: boolean;
+  filePath?: string;
+  error?: string;
+}

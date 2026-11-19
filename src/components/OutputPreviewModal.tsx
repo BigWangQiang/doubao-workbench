@@ -1,0 +1,243 @@
+/**
+ * src/components/OutputPreviewModal.tsx
+ * 产物预览 Modal：显示已完成任务的产物图片，支持全选/下载
+ */
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Modal, Checkbox, Button, message, Empty } from 'antd';
+import { DownloadOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import type { GenerationMode } from '../types';
+
+export interface OutputItem {
+  taskId: string;
+  prompt: string;
+  outputs: string[];
+  accountId: string | null;
+  mode: GenerationMode;
+}
+
+interface OutputPreviewModalProps {
+  open: boolean;
+  outputs: OutputItem[];
+  onClose: () => void;
+  onDownload: (selectedOutputs: OutputItem[]) => Promise<void>;
+}
+
+export const OutputPreviewModal: React.FC<OutputPreviewModalProps> = ({
+  open,
+  outputs,
+  onClose,
+  onDownload,
+}) => {
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [previewMedia, setPreviewMedia] = useState<{ url: string; mode: GenerationMode } | null>(null);
+  const [downloading, setDownloading] = useState(false);
+  const previewVideoRef = useRef<HTMLVideoElement | null>(null);
+
+  const releasePreviewMedia = useCallback((): void => {
+    const video = previewVideoRef.current;
+    if (video) {
+      video.pause();
+      video.removeAttribute('src');
+      try { video.load(); } catch { /* the element may already be detached */ }
+      previewVideoRef.current = null;
+    }
+    setPreviewMedia(null);
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      const allIds = new Set(outputs.map((o) => o.taskId));
+      setSelectedIds(allIds);
+      return;
+    }
+    releasePreviewMedia();
+  }, [open, outputs, releasePreviewMedia]);
+
+  useEffect(() => () => {
+    const video = previewVideoRef.current;
+    if (!video) return;
+    video.pause();
+    video.removeAttribute('src');
+    try { video.load(); } catch { /* best effort during unmount */ }
+  }, []);
+
+  const toggleSelect = (taskId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(taskId)) {
+        next.delete(taskId);
+      } else {
+        next.add(taskId);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === outputs.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(outputs.map((o) => o.taskId)));
+    }
+  };
+
+  const handleDownload = async () => {
+    const selected = outputs.filter((o) => selectedIds.has(o.taskId));
+    if (selected.length === 0) {
+      message.warning('请至少选择一个产物');
+      return;
+    }
+    setDownloading(true);
+    try {
+      await onDownload(selected);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const allSelected = selectedIds.size === outputs.length;
+
+  return (
+    <Modal
+      title={`产物预览 (${outputs.length} 个任务)`}
+      open={open}
+      onCancel={() => {
+        releasePreviewMedia();
+        onClose();
+      }}
+      destroyOnClose
+      footer={[
+        <div
+          key="footer"
+          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}
+        >
+          <Checkbox checked={allSelected} onChange={toggleSelectAll}>
+            全选
+          </Checkbox>
+          <div>
+            <Button style={{ marginRight: 8 }} onClick={() => { releasePreviewMedia(); onClose(); }}>
+              取消
+            </Button>
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              onClick={handleDownload}
+              loading={downloading}
+              disabled={selectedIds.size === 0}
+            >
+              下载选中 ({selectedIds.size})
+            </Button>
+          </div>
+        </div>,
+      ]}
+      width={720}
+      styles={{ body: { maxHeight: '60vh', overflow: 'auto' } }}
+    >
+      {outputs.length === 0 ? (
+        <Empty description="暂无已完成产物" />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {outputs.map((item) => {
+            const isSelected = selectedIds.has(item.taskId);
+            return (
+              <div
+                key={item.taskId}
+                style={{
+                  display: 'flex',
+                  gap: 12,
+                  padding: 12,
+                  border: `1px solid ${isSelected ? '#1677ff' : '#d9d9d9'}`,
+                  borderRadius: 8,
+                  background: isSelected ? '#e6f4ff' : '#fafafa',
+                  cursor: 'pointer',
+                }}
+                onClick={() => toggleSelect(item.taskId)}
+              >
+                <Checkbox
+                  checked={isSelected}
+                  onClick={(event) => event.stopPropagation()}
+                  onChange={() => toggleSelect(item.taskId)}
+                />
+                {item.outputs.length > 0 && (
+                  <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+                    {item.outputs.slice(0, 3).map((url, idx) => item.mode === 'video' ? (
+                      <button
+                        key={idx}
+                        type="button"
+                        title="播放视频"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setPreviewMedia({ url, mode: item.mode });
+                        }}
+                        style={{
+                          width: 80, height: 80, border: '1px solid #c7d2fe', borderRadius: 4,
+                          background: '#eef2ff', color: '#4f46e5', cursor: 'pointer',
+                          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 5,
+                        }}
+                      >
+                        <VideoCameraOutlined style={{ fontSize: 24 }} />
+                        <span style={{ fontSize: 11 }}>视频 {idx + 1}</span>
+                      </button>
+                    ) : (
+                      <img
+                        key={idx}
+                        src={url}
+                        alt={`产物-${idx}`}
+                        style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 4, background: '#eee' }}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setPreviewMedia({ url, mode: item.mode });
+                        }}
+                      />
+                    ))}
+                    {item.outputs.length > 3 && (
+                      <div style={{
+                        width: 80, height: 80, display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', borderRadius: 4, background: '#eee',
+                        fontSize: 12, color: '#999', flexShrink: 0,
+                      }}>
+                        +{item.outputs.length - 3}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, color: '#666', marginBottom: 4 }}>
+                    {item.prompt.substring(0, 60)}
+                    {item.prompt.length > 60 ? '...' : ''}
+                  </div>
+                  <div style={{ fontSize: 12, color: '#999' }}>
+                    {item.outputs.length} 个产物
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* 图片预览 */}
+      {previewMedia && (
+        <Modal
+          open={open && !!previewMedia}
+          footer={null}
+          onCancel={releasePreviewMedia}
+          destroyOnClose
+          width={previewMedia.mode === 'video' ? 820 : 600}
+          styles={{ body: { padding: 0 } }}
+        >
+          {previewMedia.mode === 'video' ? (
+            <video
+              ref={previewVideoRef}
+              src={previewMedia.url}
+              controls
+              style={{ width: '100%', maxHeight: '75vh', display: 'block', background: '#000' }}
+            />
+          ) : (
+            <img src={previewMedia.url} alt="预览" style={{ width: '100%', display: 'block' }} />
+          )}
+        </Modal>
+      )}
+    </Modal>
+  );
+};

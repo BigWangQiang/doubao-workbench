@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lalor 工作台视频插件</title>
+  <link rel="stylesheet" href="../../../plugin-sdk.css">
+  <style>
+    .intro, .helper { color: var(--text-muted); font-size: 12px; line-height: 1.6; }
+    .status-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--border-color, #d9dee7); border-radius: 10px; padding: 12px; margin: 12px 0 16px; }
+    .status-copy { display: flex; align-items: flex-start; gap: 8px; min-width: 0; }
+    .status-dot { flex: 0 0 8px; width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: #9ca3af; }
+    .status-dot.ok { background: #22a06b; }
+    .status-dot.error { background: #d14343; }
+    .status-text { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+    .field { min-width: 0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    label { display: block; margin: 10px 0 5px; font-weight: 600; font-size: 13px; }
+    select, input { width: 100%; min-height: 36px; }
+    select:disabled, button:disabled { opacity: .55; cursor: not-allowed; }
+    .refresh { flex: 0 0 auto; min-height: 36px; white-space: nowrap; }
+    .advanced { margin-top: 14px; }
+    .advanced summary { cursor: pointer; color: var(--text-muted); font-size: 12px; }
+    .result { min-height: 20px; margin-top: 10px; font-size: 12px; line-height: 1.5; white-space: pre-wrap; }
+    .result.ok { color: #16803c; }
+    .result.error { color: #c9362b; }
+    @media (max-width: 520px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .status-card { align-items: stretch; flex-direction: column; }
+      .refresh { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="plugin-container">
+    <h3>Lalor 工作台视频</h3>
+    <p class="intro">直接使用本机工作台中的豆包或 Dola 账号池。无需 CLI、工作区或额外登录配置。</p>
+
+    <section class="status-card" aria-live="polite">
+      <div class="status-copy">
+        <span id="statusDot" class="status-dot" aria-hidden="true"></span>
+        <div id="connectionStatus" class="status-text">正在发现本机 Lalor 工作台…</div>
+      </div>
+      <button id="refresh" class="refresh" type="button">刷新账号</button>
+    </section>
+
+    <div class="field">
+      <label for="platform">执行账号池</label>
+      <select id="platform" disabled>
+        <option value="">正在读取工作台账号池…</option>
+      </select>
+      <div class="helper">只需选择豆包或 Dola；具体账号由工作台按可用性和负载自动分配。</div>
+    </div>
+
+    <div class="field">
+      <label for="model">视频模型</label>
+      <select id="model" disabled>
+        <option value="">请先选择执行账号池</option>
+      </select>
+      <div class="helper">模型随账号平台自动切换，不需要手动填写模型引用。</div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="ratio">画面比例</label>
+        <select id="ratio">
+          <option value="16:9">16:9 横屏</option>
+          <option value="9:16">9:16 竖屏</option>
+          <option value="1:1">1:1 方形</option>
+          <option value="4:3">4:3 横屏</option>
+          <option value="3:4">3:4 竖屏</option>
+          <option value="21:9">21:9 超宽屏</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="duration">视频时长</label>
+        <select id="duration">
+          <option value="4">4 秒</option>
+          <option value="5">5 秒</option>
+          <option value="6">6 秒</option>
+          <option value="7">7 秒</option>
+          <option value="8">8 秒</option>
+          <option value="9">9 秒</option>
+          <option value="10">10 秒</option>
+          <option value="11">11 秒</option>
+          <option value="12">12 秒</option>
+          <option value="13">13 秒</option>
+          <option value="14">14 秒</option>
+          <option value="15">15 秒</option>
+          <option value="30">30 秒</option>
+        </select>
+      </div>
+    </div>
+    <div class="helper">字字动画中的参考图片、参考视频和参考音频会自动随任务提交；成片会自动回传。</div>
+
+    <details class="advanced">
+      <summary>高级设置</summary>
+      <div class="form-grid">
+        <div class="field">
+          <label for="pollInterval">状态刷新（秒）</label>
+          <input id="pollInterval" type="number" min="1" max="60" value="3">
+        </div>
+        <div class="field">
+          <label for="timeout">最长等待（秒）</label>
+          <input id="timeout" type="number" min="30" max="86400" value="1800">
+        </div>
+      </div>
+    </details>
+
+    <div id="result" class="result" role="status" aria-live="polite"></div>
+  </main>
+
+  <script src="../../../plugin-sdk.js"></script>
+  <script>
+    (function () {
+      var fields = {
+        platform: document.getElementById('platform'),
+        model: document.getElementById('model'),
+        ratio: document.getElementById('ratio'),
+        duration: document.getElementById('duration'),
+        poll_interval: document.getElementById('pollInterval'),
+        timeout: document.getElementById('timeout')
+      };
+      var refresh = document.getElementById('refresh');
+      var result = document.getElementById('result');
+      var statusText = document.getElementById('connectionStatus');
+      var statusDot = document.getElementById('statusDot');
+      var accountPools = {};
+      var videoModels = {};
+      var savedPlatform = '';
+      var savedModel = '';
+
+      function save(key) {
+        var value = fields[key].value;
+        if (key === 'duration' || key === 'poll_interval' || key === 'timeout') {
+          value = parseInt(value, 10) || 0;
+        }
+        PluginSDK.saveParam(key, value);
+      }
+
+      function setStatus(message, state) {
+        statusText.textContent = message;
+        statusDot.className = 'status-dot' + (state ? ' ' + state : '');
+      }
+
+      function setLoading(loading) {
+        refresh.disabled = loading;
+        refresh.setAttribute('aria-busy', loading ? 'true' : 'false');
+        refresh.textContent = loading ? '读取中…' : '刷新账号';
+      }
+
+      function platformLabel(platform) {
+        return platform === 'dola' ? 'Dola' : '豆包';
+      }
+
+      function modelLabel(model) {
+        var labels = {
+          'seedance-2.5': 'Seedance 2.5',
+          'seedance-2.0': 'Seedance 2.0',
+          'seedance-2.0-fast': 'Seedance 2.0 Fast',
+          'seedance-2.0-mini': 'Seedance 2.0 Mini'
+        };
+        return labels[model] || model;
+      }
+
+      function selectedPlatform() {
+        return fields.platform.value;
+      }
+
+      function poolTotal(platform) {
+        var pool = accountPools[platform];
+        return pool && Number(pool.total) > 0 ? Number(pool.total) : 0;
+      }
+
+      function populateModels(preferred) {
+        var platform = selectedPlatform();
+        fields.model.innerHTML = '';
+        if (!platform) {
+          fields.model.innerHTML = '<option value="">请先选择执行账号池</option>';
+          fields.model.disabled = true;
+          return;
+        }
+        var models = Array.isArray(videoModels[platform]) ? videoModels[platform] : [];
+        if (!models.length) {
+          fields.model.innerHTML = '<option value="">该账号池暂无可用视频模型</option>';
+          fields.model.disabled = true;
+          result.className = 'result error';
+          result.textContent = platformLabel(platform) + '账号池没有可用视频模型，请刷新工作台能力。';
+          return;
+        }
+        models.forEach(function (model) {
+          var option = document.createElement('option');
+          option.value = model;
+          option.textContent = modelLabel(model);
+          fields.model.appendChild(option);
+        });
+        fields.model.disabled = false;
+        var desired = preferred || savedModel;
+        if (desired && models.indexOf(desired) >= 0) fields.model.value = desired;
+        savedModel = fields.model.value;
+        save('model');
+      }
+
+      function populatePools() {
+        var platforms = ['doubao', 'dola'].filter(function (platform) {
+          return poolTotal(platform) > 0 && Array.isArray(videoModels[platform]) && videoModels[platform].length > 0;
+        });
+        fields.platform.innerHTML = '';
+        if (!platforms.length) {
+          fields.platform.innerHTML = '<option value="">工作台中暂无可用账号池</option>';
+          fields.platform.disabled = true;
+          fields.model.disabled = true;
+          return;
+        }
+        platforms.forEach(function (platform) {
+          var option = document.createElement('option');
+          option.value = platform;
+          option.textContent = platformLabel(platform) + ' · ' + poolTotal(platform) + ' 个账号 · 自动调度';
+          fields.platform.appendChild(option);
+        });
+        fields.platform.disabled = false;
+        if (savedPlatform && platforms.indexOf(savedPlatform) >= 0) fields.platform.value = savedPlatform;
+        savedPlatform = fields.platform.value;
+        save('platform');
+        populateModels(savedModel);
+      }
+
+      function requestCapabilities() {
+        setLoading(true);
+        setStatus('正在读取本机工作台账号和视频模型…', '');
+        result.className = 'result';
+        result.textContent = '';
+        PluginSDK.sendAction('refresh_capabilities', {});
+      }
+
+      fields.platform.addEventListener('change', function () {
+        savedPlatform = fields.platform.value;
+        save('platform');
+        populateModels('');
+      });
+      fields.model.addEventListener('change', function () {
+        savedModel = fields.model.value;
+        save('model');
+      });
+      ['ratio', 'duration', 'poll_interval', 'timeout'].forEach(function (key) {
+        fields[key].addEventListener('change', function () { save(key); });
+      });
+      refresh.addEventListener('click', requestCapabilities);
+
+      PluginSDK.onAction('refresh_capabilities', function (data) {
+        setLoading(false);
+        if (!data || !data.ok) {
+          accountPools = {};
+          videoModels = {};
+          fields.platform.disabled = true;
+          fields.model.disabled = true;
+          setStatus((data && data.error) || '未发现 Lalor 工作台', 'error');
+          result.className = 'result error';
+          result.textContent = '请先启动最新版 Lalor 工作台，再点击“刷新账号”。';
+          return;
+        }
+        accountPools = data.accountPools && typeof data.accountPools === 'object' ? data.accountPools : {};
+        videoModels = data.videoModels && typeof data.videoModels === 'object'
+          ? data.videoModels : {};
+        populatePools();
+        var readyText = data.ready === false ? '工作台已连接，界面仍在加载' : (data.message || '工作台已连接');
+        setStatus(readyText, data.ready === false ? '' : 'ok');
+        var total = poolTotal('doubao') + poolTotal('dola');
+        result.className = total ? 'result ok' : 'result error';
+        result.textContent = total
+          ? '选择账号池、模型、比例和时长后即可生成；具体账号由工作台自动均衡分配。'
+          : '工作台中还没有豆包或 Dola 账号。';
+      });
+
+      PluginSDK.onReady(function (params) {
+        params = params || {};
+        savedPlatform = String(params.platform || '').trim();
+        savedModel = String(params.model || '').trim();
+        ['ratio', 'duration', 'poll_interval', 'timeout'].forEach(function (key) {
+          if (params[key] !== undefined && params[key] !== null) fields[key].value = params[key];
+        });
+        window.setTimeout(requestCapabilities, 80);
+      });
+    }());
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+.canvas-library-panel {
+    --library-surface: var(--workspace-surface-strong);
+    --library-card: var(--cn-spatial-elevated);
+    --library-control: color-mix(in srgb, var(--foreground) 6%, var(--library-surface));
+    --library-bottom: calc(var(--canvas-inset-y) + var(--space-12) + var(--space-3));
+    /* 与画布工具栏共用定位区域，避免固定在屏幕左侧或随画布缩放。 */
+    position: absolute;
+    left: 50%;
+    bottom: var(--library-bottom);
+    transform: translateX(-50%);
+    z-index: var(--z-popover);
+    width: min(calc(var(--space-24) * 6 + var(--space-12)), calc(100% - var(--space-8)));
+    height: min(calc(var(--space-24) * 7), calc(100% - var(--library-bottom) - var(--space-20)));
+    display: flex;
+    flex-direction: column;
+    color: var(--foreground);
+    background: var(--library-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-2xl);
+    box-shadow: var(--elevation-overlay);
+    overflow: hidden;
+}
+.canvas-library-panel.is-expanded { width: min(calc(var(--space-24) * 11), calc(100% - var(--space-8))); height: calc(100% - var(--library-bottom) - var(--space-20)); }
+.canvas-library-header { display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-4) var(--space-4) var(--space-3); }
+.canvas-library-navigation { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1); flex: 1; min-width: 0; }
+.canvas-library-header nav { display: flex; gap: var(--space-1); padding: var(--space-1); border-radius: var(--r-xl); background: var(--library-control); }
+.canvas-library-header nav button { display: inline-flex; align-items: center; justify-content: center; min-height: var(--space-10); border-radius: var(--r-lg); padding: var(--space-2) var(--space-3); color: var(--muted-foreground); cursor: pointer; white-space: nowrap; font-size: var(--fs-body); font-weight: 500; }
+.canvas-library-header button[aria-pressed=true] { background: var(--library-surface); color: var(--foreground); font-weight: 600; }
+.canvas-library-header nav button:hover { color: var(--foreground); }
+.canvas-library-window-actions { display: flex; flex-shrink: 0; align-items: center; min-height: var(--space-12); }
+/* 与画布列表页的搜索栏隔离，避免固定高度和背景叠入此浮层。 */
+.canvas-library-panel-search { display: flex; flex-shrink: 0; align-items: center; gap: var(--space-2); padding: 0 var(--space-4) var(--space-3); }
+.canvas-library-panel-search .ant-input-affix-wrapper { flex: 1; min-width: 0; min-height: var(--space-10); padding: var(--space-2) var(--space-4); border-radius: var(--r-full); background: var(--library-control); border-color: transparent; box-shadow: none; }
+.canvas-library-panel-search .ant-input-prefix { margin-inline-end: var(--space-3); color: var(--muted-foreground); }
+.canvas-library-panel-search .ant-input-affix-wrapper:focus-within { border-color: var(--workspace-accent); }
+.canvas-library-panel-search .canvas-library-filter-toggle { flex-shrink: 0; height: var(--space-10); width: var(--space-10); border-radius: var(--r-full); }
+.canvas-library-filter-toggle[aria-expanded=true], .canvas-library-filter-toggle[aria-pressed=true] { background: var(--library-control); color: var(--foreground); }
+.canvas-library-panel-filters { display: flex; flex-shrink: 0; align-items: center; gap: var(--space-2); padding: 0 var(--space-4) var(--space-3); }
+.canvas-library-panel-filters .ant-select { flex: 1; min-width: 0; }
+.canvas-library-scroll { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: var(--space-1) var(--space-4) var(--space-3); scrollbar-width: thin; }
+.canvas-library-panel-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); align-items: start; gap: var(--space-4) var(--space-3); }
+.canvas-library-panel.is-expanded .canvas-library-panel-grid { grid-template-columns: repeat(auto-fill,minmax(calc(var(--space-20) * 2),1fr)); }
+.canvas-library-card { position: relative; min-width: 0; text-align: center; cursor: pointer; border: 0; border-radius: var(--r-xl); background: transparent; transition: transform var(--motion-panel); }
+.canvas-library-card:hover { transform: translateY(calc(var(--space-1) * -1)); }
+.canvas-library-card:disabled { cursor: wait; }
+.canvas-library-card > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; padding: var(--space-2) var(--space-1) 0; font-size: var(--fs-body); font-weight: 600; line-height: 1.5; }
+.canvas-library-cover-wrap { position: relative; overflow: hidden; border-radius: var(--r-xl); }
+.canvas-library-cover { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; border-radius: var(--r-xl); background: var(--library-card); }
+.canvas-library-placeholder { display: grid; place-items: center; color: var(--muted-foreground); }
+.canvas-library-audio-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); color: var(--workspace-accent); background: linear-gradient(145deg, color-mix(in srgb, var(--workspace-accent) 16%, var(--library-control)), var(--library-control)); border: var(--stroke-1) solid color-mix(in srgb, var(--workspace-accent) 18%, var(--border)); }
+.canvas-library-audio-cover span { color: var(--muted-foreground); font-size: var(--fs-caption); }
+.canvas-library-insert { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--cn-spatial-elevated) 45%, transparent); opacity: 0; transition: opacity var(--motion-panel); }
+.canvas-library-insert > span { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-width: var(--space-24); min-height: var(--space-10); padding: var(--space-2) var(--space-5); border-radius: var(--r-lg); background: var(--foreground); color: var(--background); font-size: var(--fs-body); font-weight: 600; }
+.canvas-library-card:hover .canvas-library-insert, .canvas-library-card:focus-visible .canvas-library-insert, .canvas-library-card[aria-busy=true] .canvas-library-insert { opacity: 1; }
+.canvas-library-state { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: var(--space-3); min-height: calc(var(--space-24) * 2); height: 100%; color: var(--muted-foreground); font-size: var(--fs-body); }
+.canvas-library-panel footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: var(--space-10); padding: var(--space-2) var(--space-4); color: var(--muted-foreground); font-size: var(--fs-caption); }
+.canvas-library-panel:focus:not(:focus-visible), .canvas-library-panel button:focus:not(:focus-visible) { outline: none; }
+.canvas-library-panel button:focus-visible { outline: var(--stroke-2) solid var(--workspace-accent); outline-offset: var(--space-1); }
+@media (max-width: 600px) { .canvas-library-header { padding: var(--space-3); } .canvas-library-header nav button { padding: var(--space-2); font-size: var(--fs-caption); } .canvas-library-window-actions { flex-direction: column; } .canvas-library-panel-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (hover: none) { .canvas-library-insert { opacity: 1; background: transparent; align-items: end; padding-bottom: var(--space-3); } }
+@media (prefers-reduced-motion: reduce) { .canvas-library-card, .canvas-library-insert { transition: none; } .canvas-library-card:hover { transform: none; } }

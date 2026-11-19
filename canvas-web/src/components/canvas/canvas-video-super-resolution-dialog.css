@@ -1,0 +1,189 @@
+.canvas-super-resolution-dialog {
+    --super-resolution-surface: var(--muted);
+    --super-resolution-text: var(--foreground);
+    --super-resolution-muted: var(--muted-foreground);
+    --super-resolution-border: var(--border-semantic);
+    color: var(--super-resolution-text);
+}
+
+.canvas-super-resolution-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--fs-heading);
+    font-weight: 600;
+}
+
+.canvas-super-resolution-icon {
+    display: grid;
+    place-items: center;
+    width: calc(var(--space-8) + var(--space-1));
+    height: calc(var(--space-8) + var(--space-1));
+    border-radius: var(--r-lg);
+    background: var(--super-resolution-surface);
+}
+
+.canvas-super-resolution-icon svg {
+    width: var(--space-5);
+    height: var(--space-5);
+}
+
+.canvas-super-resolution-body {
+    display: grid;
+    gap: var(--space-5);
+}
+
+/* 独立列限制媒体固有宽度，避免全局 video 的 width:100% 挤掉右侧文字。 */
+.canvas-super-resolution-source {
+    display: grid;
+    grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-4);
+    padding-bottom: var(--space-5);
+    border-bottom: var(--stroke-1) solid var(--super-resolution-border);
+}
+
+.canvas-super-resolution-thumbnail {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: var(--r-md);
+    background: var(--super-resolution-surface);
+}
+
+.canvas-super-resolution-thumbnail video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.canvas-super-resolution-source-info {
+    min-width: 0;
+}
+
+.canvas-super-resolution-source-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--super-resolution-muted);
+    font-size: var(--fs-caption);
+}
+
+.canvas-super-resolution-source-label span {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.canvas-super-resolution-source-name {
+    margin-block: var(--space-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--fs-body);
+    font-weight: 500;
+}
+
+.canvas-super-resolution-source-info p,
+.canvas-super-resolution-note p {
+    margin: 0;
+    color: var(--super-resolution-muted);
+    font-size: var(--fs-caption);
+    line-height: 1.6;
+}
+
+.canvas-super-resolution-field {
+    display: grid;
+    min-width: 0;
+    gap: var(--space-2);
+    font-size: var(--fs-body);
+    font-weight: 500;
+}
+
+.canvas-super-resolution-model {
+    width: 100%;
+    font-size: var(--fs-body);
+    font-weight: 400;
+}
+
+.canvas-super-resolution-options {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-2);
+}
+
+.canvas-super-resolution-option {
+    min-width: 0;
+    min-height: calc(var(--space-10) + var(--space-1));
+    padding: var(--space-2) var(--space-1);
+    border: var(--stroke-1) solid var(--super-resolution-border);
+    border-radius: var(--r-md);
+    background: transparent;
+    color: var(--super-resolution-text);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.canvas-super-resolution-option:hover:not(:disabled) {
+    background: var(--super-resolution-surface);
+}
+
+.canvas-super-resolution-option[aria-pressed="true"] {
+    border-color: var(--super-resolution-text);
+    box-shadow: inset 0 0 0 var(--stroke-1) var(--super-resolution-text);
+    background: var(--super-resolution-surface);
+    font-weight: 700;
+}
+
+.canvas-super-resolution-option:disabled {
+    color: var(--super-resolution-muted);
+    cursor: not-allowed;
+}
+
+.canvas-super-resolution-option:focus-visible {
+    outline: var(--stroke-2) solid var(--super-resolution-text);
+    outline-offset: var(--space-half);
+}
+
+.canvas-super-resolution-note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    color: var(--super-resolution-muted);
+}
+
+.canvas-super-resolution-note svg {
+    flex-shrink: 0;
+    margin-top: var(--space-half);
+}
+
+.canvas-super-resolution-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.canvas-super-resolution-cost {
+    display: grid;
+    min-width: 0;
+    gap: var(--space-half);
+    color: var(--super-resolution-muted);
+    font-size: var(--fs-caption);
+    text-align: left;
+}
+
+.canvas-super-resolution-cost strong {
+    color: var(--super-resolution-text);
+    font-size: var(--fs-heading);
+    font-variant-numeric: tabular-nums;
+}
+
+.canvas-super-resolution-submit.ant-btn {
+    flex-shrink: 0;
+    height: calc(var(--space-10) + var(--space-1));
+    padding-inline: var(--space-4);
+    border-radius: var(--r-lg);
+}

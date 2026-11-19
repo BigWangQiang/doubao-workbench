@@ -1,0 +1,96 @@
+#dcp-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 88px;
+  z-index: 2147483600;
+  background: linear-gradient(135deg, #4f6bff, #7a5cff);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(79, 107, 255, 0.4);
+  user-select: none;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+#dcp-fab:hover { filter: brightness(1.1); }
+
+#dcp-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 132px;
+  z-index: 2147483600;
+  display: none;
+  max-width: 320px;
+  background: #fff;
+  color: #222;
+  border: 1px solid #e3e6ee;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+#dcp-panel {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 2147483600;
+  display: none;
+  width: 340px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e3e6ee;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.16);
+  padding: 14px;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 13px;
+  color: #222;
+}
+#dcp-panel .dcp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+#dcp-panel #dcp-close { cursor: pointer; color: #888; padding: 0 4px; }
+#dcp-panel #dcp-close:hover { color: #333; }
+#dcp-panel .dcp-tip { color: #8a8f9c; font-size: 12px; margin-bottom: 10px; line-height: 1.5; }
+#dcp-panel #dcp-all {
+  width: 100%;
+  background: linear-gradient(135deg, #4f6bff, #7a5cff);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+#dcp-panel #dcp-all:hover { filter: brightness(1.1); }
+#dcp-panel .dcp-item {
+  padding: 8px 0;
+  border-top: 1px solid #f0f2f7;
+}
+#dcp-panel .dcp-idx { margin-bottom: 6px; color: #444; }
+#dcp-panel .dcp-btns { display: flex; gap: 8px; }
+#dcp-panel .dcp-btns button {
+  flex: 1;
+  border: 1px solid #dde1ea;
+  background: #f7f8fc;
+  color: #333;
+  border-radius: 6px;
+  padding: 6px 0;
+  font-size: 12px;
+  cursor: pointer;
+}
+#dcp-panel .dcp-btns button:hover { background: #eef0f8; }
+#dcp-panel .dcp-btns .dcp-dl { border-color: #4f6bff; color: #4f6bff; font-weight: 600; }
+#dcp-panel .dcp-fail { color: #d33; font-size: 12px; }

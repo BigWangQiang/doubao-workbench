@@ -1,0 +1,27 @@
+/* 与图片自身尺寸一致，保留原有 object-fit、点击和拖拽边界。 */
+img[data-image-reveal="waiting"] {
+    filter: blur(var(--image-reveal-blur));
+    opacity: var(--image-reveal-opacity);
+}
+
+img[data-image-reveal="revealed"] {
+    filter: none;
+    opacity: var(--opa-full);
+    transition:
+        filter var(--image-reveal-duration) var(--motion-ease-out),
+        opacity var(--image-reveal-duration) var(--motion-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    img[data-image-reveal] {
+        filter: none;
+        opacity: var(--opa-full);
+        transition: none;
+    }
+}
+
+.no-motion img[data-image-reveal] {
+    filter: none;
+    opacity: var(--opa-full);
+    transition: none;
+}

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lalor 工作台图片插件</title>
+  <link rel="stylesheet" href="../../../plugin-sdk.css">
+  <style>
+    .intro, .helper { color: var(--text-muted); font-size: 12px; line-height: 1.6; }
+    .status-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--border-color, #d9dee7); border-radius: 10px; padding: 12px; margin: 12px 0 16px; }
+    .status-copy { display: flex; align-items: flex-start; gap: 8px; min-width: 0; }
+    .status-dot { flex: 0 0 8px; width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: #9ca3af; }
+    .status-dot.ok { background: #22a06b; }
+    .status-dot.error { background: #d14343; }
+    .status-text { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+    .form-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(112px, .35fr); gap: 10px; }
+    .field { min-width: 0; }
+    label { display: block; margin: 10px 0 5px; font-weight: 600; font-size: 13px; }
+    select, input { width: 100%; min-height: 36px; }
+    select:disabled, button:disabled { opacity: .55; cursor: not-allowed; }
+    .refresh { flex: 0 0 auto; min-height: 36px; white-space: nowrap; }
+    .advanced { margin-top: 14px; }
+    .advanced summary { cursor: pointer; color: var(--text-muted); font-size: 12px; }
+    .advanced-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .result { min-height: 20px; margin-top: 10px; font-size: 12px; line-height: 1.5; white-space: pre-wrap; }
+    .result.ok { color: #16803c; }
+    .result.error { color: #c9362b; }
+    @media (max-width: 520px) {
+      .form-row, .advanced-grid { grid-template-columns: 1fr; }
+      .status-card { align-items: stretch; flex-direction: column; }
+      .refresh { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="plugin-container">
+    <h3>Lalor 工作台图片</h3>
+    <p class="intro">直接使用本机工作台中的豆包或 Dola 账号。无需 CLI、工作区或额外登录配置。</p>
+
+    <section class="status-card" aria-live="polite">
+      <div class="status-copy">
+        <span id="statusDot" class="status-dot" aria-hidden="true"></span>
+        <div id="connectionStatus" class="status-text">正在发现本机 Lalor 工作台…</div>
+      </div>
+      <button id="refresh" class="refresh" type="button">刷新账号</button>
+    </section>
+
+    <div class="form-row">
+      <div class="field">
+        <label for="platform">执行账号池</label>
+        <select id="platform" disabled>
+          <option value="">正在读取账号池…</option>
+        </select>
+        <div class="helper">只需选择豆包或 Dola；工作台会自动分配可用账号并并发执行。</div>
+      </div>
+      <div class="field">
+        <label for="count">输出数量</label>
+        <input id="count" type="number" min="1" max="15" step="1" value="1">
+      </div>
+    </div>
+    <div class="helper">参考图片会随任务自动传给工作台；生成结果会自动回传字字动画。</div>
+
+    <details class="advanced">
+      <summary>高级设置</summary>
+      <div class="advanced-grid">
+        <div class="field">
+          <label for="pollInterval">状态刷新（秒）</label>
+          <input id="pollInterval" type="number" min="1" max="60" value="3">
+        </div>
+        <div class="field">
+          <label for="timeout">最长等待（秒）</label>
+          <input id="timeout" type="number" min="30" max="86400" value="1800">
+        </div>
+      </div>
+    </details>
+
+    <div id="result" class="result" role="status" aria-live="polite"></div>
+  </main>
+
+  <script src="../../../plugin-sdk.js"></script>
+  <script>
+    (function () {
+      var fields = {
+        platform: document.getElementById('platform'),
+        count: document.getElementById('count'),
+        poll_interval: document.getElementById('pollInterval'),
+        timeout: document.getElementById('timeout')
+      };
+      var refresh = document.getElementById('refresh');
+      var result = document.getElementById('result');
+      var statusText = document.getElementById('connectionStatus');
+      var statusDot = document.getElementById('statusDot');
+      var accountPools = {};
+      var capabilities = {};
+      var savedPlatform = '';
+
+      function save(key) {
+        var value = fields[key].value;
+        if (key === 'count' || key === 'poll_interval' || key === 'timeout') {
+          value = parseInt(value, 10) || 0;
+        }
+        PluginSDK.saveParam(key, value);
+      }
+
+      function setStatus(message, state) {
+        statusText.textContent = message;
+        statusDot.className = 'status-dot' + (state ? ' ' + state : '');
+      }
+
+      function setLoading(loading) {
+        refresh.disabled = loading;
+        refresh.setAttribute('aria-busy', loading ? 'true' : 'false');
+        refresh.textContent = loading ? '读取中…' : '刷新账号';
+      }
+
+      function platformLabel(platform) {
+        return platform === 'dola' ? 'Dola' : '豆包';
+      }
+
+      function poolTotal(platform) {
+        var pool = accountPools[platform];
+        return pool && Number(pool.total) > 0 ? Number(pool.total) : 0;
+      }
+
+      function populatePools() {
+        var platforms = ['doubao', 'dola'].filter(function (platform) {
+          return poolTotal(platform) > 0 && Array.isArray(capabilities[platform]) && capabilities[platform].length > 0;
+        });
+        fields.platform.innerHTML = '';
+        if (!platforms.length) {
+          fields.platform.innerHTML = '<option value="">暂无可用账号池</option>';
+          fields.platform.disabled = true;
+          return;
+        }
+        platforms.forEach(function (platform) {
+          var option = document.createElement('option');
+          option.value = platform;
+          option.textContent = platformLabel(platform) + ' · ' + poolTotal(platform) + ' 个账号 · 自动调度';
+          fields.platform.appendChild(option);
+        });
+        fields.platform.disabled = false;
+        if (savedPlatform && platforms.indexOf(savedPlatform) >= 0) fields.platform.value = savedPlatform;
+        savedPlatform = fields.platform.value;
+        save('platform');
+      }
+
+      function requestCapabilities() {
+        setLoading(true);
+        setStatus('正在读取本机工作台账号…', '');
+        result.className = 'result';
+        result.textContent = '';
+        PluginSDK.sendAction('refresh_capabilities', {});
+      }
+
+      fields.platform.addEventListener('change', function () {
+        savedPlatform = fields.platform.value;
+        save('platform');
+      });
+      ['count', 'poll_interval', 'timeout'].forEach(function (key) {
+        fields[key].addEventListener('change', function () { save(key); });
+      });
+      refresh.addEventListener('click', requestCapabilities);
+
+      PluginSDK.onAction('refresh_capabilities', function (data) {
+        setLoading(false);
+        if (!data || !data.ok) {
+          accountPools = {};
+          capabilities = {};
+          fields.platform.disabled = true;
+          setStatus((data && data.error) || '未发现 Lalor 工作台', 'error');
+          result.className = 'result error';
+          result.textContent = '请先启动最新版 Lalor 工作台，再点击“刷新账号”。';
+          return;
+        }
+        accountPools = data.accountPools && typeof data.accountPools === 'object' ? data.accountPools : {};
+        capabilities = data.imageCapabilities && typeof data.imageCapabilities === 'object'
+          ? data.imageCapabilities : {};
+        populatePools();
+        var readyText = data.ready === false ? '工作台已连接，界面仍在加载' : (data.message || '工作台已连接');
+        setStatus(readyText, data.ready === false ? '' : 'ok');
+        var total = poolTotal('doubao') + poolTotal('dola');
+        result.className = total ? 'result ok' : 'result error';
+        result.textContent = total
+          ? '选择豆包或 Dola 账号池后即可生成；具体账号由工作台自动均衡分配。'
+          : '工作台中还没有豆包或 Dola 账号。';
+      });
+
+      PluginSDK.onReady(function (params) {
+        params = params || {};
+        savedPlatform = String(params.platform || '').trim();
+        if (!savedPlatform && String(params.image_model || '').indexOf('dola') === 0) savedPlatform = 'dola';
+        ['count', 'poll_interval', 'timeout'].forEach(function (key) {
+          if (params[key] !== undefined && params[key] !== null) fields[key].value = params[key];
+        });
+        window.setTimeout(requestCapabilities, 80);
+      });
+    }());
+  </script>
+</body>
+</html>

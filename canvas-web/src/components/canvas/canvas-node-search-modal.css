@@ -1,0 +1,137 @@
+.canvas-node-search-modal {
+    --canvas-search-width: calc(var(--space-24) * 6 + var(--space-6));
+    --canvas-search-surface: var(--cn-spatial-elevated);
+    --canvas-search-ink: var(--cn-text);
+    --canvas-search-muted: var(--cn-muted);
+    --canvas-search-line: var(--cn-spatial-toolbar-border);
+    --canvas-search-hover: color-mix(in srgb, var(--cn-text) 6%, transparent);
+    --canvas-search-input-surface: color-mix(in srgb, var(--cn-text) 4%, var(--canvas-search-surface));
+    --canvas-search-focus: color-mix(in srgb, var(--cn-text) 35%, var(--canvas-search-surface));
+    --canvas-search-list-height: calc(var(--space-20) * 4);
+}
+
+/* AntD 6 的实际内容壳是 container；所有第三方覆盖只作用于此弹窗。 */
+.canvas-node-search-modal .ant-modal-container {
+    overflow: hidden;
+    border: var(--stroke-1) solid var(--canvas-search-line);
+    border-radius: var(--r-3xl);
+    background: var(--canvas-search-surface);
+    color: var(--canvas-search-ink);
+    box-shadow: var(--elevation-overlay);
+}
+
+.canvas-node-search-modal .ant-modal-header { background: transparent; }
+.canvas-node-search-modal .ant-modal-close { top: var(--space-3); inset-inline-end: var(--space-3); color: var(--canvas-search-muted); }
+
+.canvas-node-search-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-right: var(--space-8);
+    color: var(--canvas-search-ink);
+    font-size: var(--fs-body-lg);
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.canvas-node-search-total {
+    color: var(--canvas-search-muted);
+    font-size: var(--fs-caption);
+    font-weight: 400;
+}
+
+.canvas-node-search-field { margin-inline: var(--space-5); }
+
+.canvas-node-search-modal .canvas-node-search-input {
+    min-height: var(--space-12);
+    padding: var(--space-3) var(--space-4);
+    border: var(--stroke-1) solid var(--canvas-search-line);
+    border-radius: var(--r-lg);
+    background: var(--canvas-search-input-surface);
+    color: var(--canvas-search-ink);
+    box-shadow: none;
+    transition: border-color var(--motion-dur-fast) var(--motion-ease-out);
+}
+
+/* 通用 AntD 焦点规则带 important，这里仅替换该搜索框的亮白描边。 */
+.canvas-node-search-modal .canvas-node-search-input:hover,
+.canvas-node-search-modal .canvas-node-search-input:focus-within { border-color: var(--canvas-search-focus) !important; }
+.canvas-node-search-modal .canvas-node-search-input .ant-input { background: transparent; color: inherit; font-size: var(--fs-body); }
+.canvas-node-search-modal .canvas-node-search-input .ant-input::placeholder { color: var(--canvas-search-muted); }
+.canvas-node-search-modal .canvas-node-search-input .ant-input-prefix { margin-inline-end: var(--space-3); color: var(--canvas-search-muted); }
+
+.canvas-node-search-list-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5) var(--space-2);
+    color: var(--canvas-search-muted);
+    font-size: var(--fs-caption);
+}
+
+.canvas-node-search-results {
+    max-height: min(var(--canvas-search-list-height), 45dvh);
+    margin: 0 var(--space-2) var(--space-2);
+    padding: var(--space-half);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.canvas-node-search-result {
+    display: flex;
+    width: 100%;
+    min-height: calc(var(--space-12) + var(--space-3));
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2-half) var(--space-3);
+    border: 0;
+    border-radius: var(--r-lg);
+    background: transparent;
+    color: var(--canvas-search-ink);
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--motion-dur-fast) var(--motion-ease-out);
+}
+
+.canvas-node-search-result:hover,
+.canvas-node-search-result:focus-visible { background: var(--canvas-search-hover); }
+.canvas-node-search-result:focus-visible { outline: var(--stroke-1) solid var(--canvas-search-focus); outline-offset: calc(-1 * var(--stroke-1)); }
+
+.canvas-node-search-icon {
+    display: grid;
+    width: var(--space-10);
+    height: var(--space-10);
+    flex: none;
+    place-items: center;
+    border: var(--stroke-1) solid var(--canvas-search-line);
+    border-radius: var(--r-lg);
+    background: var(--canvas-search-input-surface);
+    color: var(--canvas-search-muted);
+}
+
+.canvas-node-search-copy { min-width: 0; flex: 1; }
+.canvas-node-search-name { display: block; overflow: hidden; font-size: var(--fs-body); font-weight: 500; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
+.canvas-node-search-context { display: flex; min-width: 0; align-items: center; gap: var(--space-1); margin-top: var(--space-half); color: var(--canvas-search-muted); font-size: var(--fs-caption); line-height: 1.5; }
+.canvas-node-search-type { flex: none; padding: var(--space-half) var(--space-2); border-radius: var(--r-sm); background: var(--canvas-search-hover); color: var(--canvas-search-muted); font-size: var(--fs-caption); }
+.canvas-node-search-locate { flex: none; opacity: 0; color: var(--canvas-search-muted); }
+.canvas-node-search-result:hover .canvas-node-search-locate,
+.canvas-node-search-result:focus-visible .canvas-node-search-locate { opacity: 1; }
+
+.canvas-node-search-empty { display: flex; min-height: calc(var(--space-20) * 2); flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-6); color: var(--canvas-search-muted); font-size: var(--fs-caption); }
+.canvas-node-search-empty strong { margin-top: var(--space-2); color: var(--canvas-search-ink); font-size: var(--fs-body); font-weight: 500; }
+.canvas-node-search-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-5); border-top: var(--stroke-1) solid var(--canvas-search-line); color: var(--canvas-search-muted); font-size: var(--fs-caption); }
+.canvas-node-search-footer > span { display: flex; align-items: center; gap: var(--space-2); }
+.canvas-node-search-footer kbd { padding: 0 var(--space-1); border: var(--stroke-1) solid var(--canvas-search-line); border-radius: var(--r-xs); font-family: inherit; line-height: 1.5; }
+
+@media (max-width: 480px) {
+    .canvas-node-search-type,
+    .canvas-node-search-locate { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .canvas-node-search-modal .canvas-node-search-input,
+    .canvas-node-search-result { transition: none; }
+}

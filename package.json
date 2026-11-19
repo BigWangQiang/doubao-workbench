@@ -1,0 +1,176 @@
+{
+  "name": "doubao-studio-desktop",
+  "version": "3.0.3",
+  "description": "屿砚工作台 - AI 内容创作者多账号管理与自动化生产工作台",
+  "main": "dist/main/main.js",
+  "author": "Doubao Studio Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BigWangQiang/yuyan-workbench.git"
+  },
+  "homepage": "https://github.com/BigWangQiang/yuyan-workbench#readme",
+  "bugs": {
+    "url": "https://github.com/BigWangQiang/yuyan-workbench/issues"
+  },
+  "keywords": [
+    "doubao",
+    "seedance",
+    "electron",
+    "multi-account",
+    "workflow",
+    "mcp"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:renderer": "node node_modules/vite/bin/vite.js",
+    "dev:canvas": "pnpm --dir canvas-web dev",
+    "dev:main": "wait-on http://localhost:5173 && pnpm run build:main && electron .",
+    "build:contracts": "tsc -b packages/contracts/tsconfig.json --force",
+    "build:main": "pnpm run build:contracts && tsc -p tsconfig.main.json",
+    "build:canvas": "pnpm --dir canvas-web build",
+    "build:renderer": "node node_modules/vite/bin/vite.js build && pnpm run build:canvas",
+    "build": "pnpm run build:renderer && pnpm run build:main",
+    "start": "electron .",
+    "pack": "pnpm run build && pnpm run release:verify && electron-builder --dir",
+    "dist": "pnpm run build && pnpm run release:verify && electron-builder",
+    "dist:win": "pnpm run build && pnpm run release:verify && electron-builder --win --publish never",
+    "dist:mac": "pnpm run build && pnpm run release:verify && electron-builder --mac --arm64 --publish never",
+    "release:verify": "node scripts/release-gate.mjs --source",
+    "release:verify:artifact": "node scripts/release-gate.mjs --artifact release",
+    "lint": "eslint . --max-warnings 149",
+    "ts-check": "pnpm run build:contracts && tsc --noEmit -p tsconfig.main.json && tsc --noEmit -p tsconfig.renderer.json && tsc --noEmit -p tsconfig.test.json",
+    "check:project": "node scripts/fixtures/run-fixture-tests.mjs && node scripts/fixtures/run-contracts-fixtures.mjs && node scripts/check-project.mjs && node scripts/check-contracts-boundary.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "validate": "pnpm run ts-check && pnpm run lint && pnpm run check:project && pnpm run test && pnpm run build",
+    "cli:list": "node dist/main/cli/doubaoCliEntry.js list",
+    "cli:import": "node dist/main/cli/doubaoCliEntry.js import-csv",
+    "cli:migrate-project": "node dist/main/cli/doubaoCliEntry.js migrate-project-tasks",
+    "mcp:server": "node dist/main/mcp/doubaoMcpServer.js",
+    "mcp:client": "node dist/main/mcp/mcpClientCli.js"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.5.0",
+    "antd": "^5.22.0",
+    "electron-updater": "6.6.2",
+    "js-yaml": "4.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "uuid": "^10.0.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@doubao-studio/contracts": "workspace:*",
+    "@electron/asar": "3.4.1",
+    "@electron/fuses": "1.8.0",
+    "@eslint/js": "^9.39.4",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "26.0.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/uuid": "^10.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^3.2.7",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^15.15.0",
+    "postcss": "^8.4.49",
+    "resedit": "1.7.2",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.63.0",
+    "vite": "^6.0.3",
+    "vitest": "^3.2.7",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.doubao.studio.desktop",
+    "productName": "屿砚工作台",
+    "artifactName": "Yuyan-Workbench-Setup-${version}-${arch}.${ext}",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://yuyan-ai.site/desktop-updates/win-x64/",
+        "useMultipleRangeRequest": false
+      }
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "security/desktop-trust.json",
+      "dist/**/*",
+      "!dist/**/*.map",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "integrations/zizi-workbench/Lalor-Zizi-Plugins-2.1.1.zip",
+        "to": "plugins/Lalor-Zizi-Plugins-2.1.1.zip"
+      },
+      {
+        "from": "extensions/doubao-canvas-parser",
+        "to": "extensions/doubao-canvas-parser"
+      }
+    ],
+    "afterPack": "scripts/electron-builder-after-pack.cjs",
+    "win": {
+      "extraResources": [
+        {
+          "from": "vendor/network-core",
+          "to": "network-core",
+          "filter": ["*.txt", "network-core.exe"]
+        }
+      ],
+      "publisherName": "屿砚",
+      "verifyUpdateCodeSignature": true,
+      "icon": "build/yuyan-workbench.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "src/assets/yuyan-workbench.png",
+      "identity": null,
+      "hardenedRuntime": false,
+      "notarize": false,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64"]
+        }
+      ],
+      "extraResources": [
+        {
+          "from": "vendor/network-core",
+          "to": "network-core",
+          "filter": ["*.txt", "network-core"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "屿砚工作台",
+      "installerIcon": "build/yuyan-workbench.ico",
+      "uninstallerIcon": "build/yuyan-workbench.ico",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true,
+      "language": "2052"
+    }
+  }
+}

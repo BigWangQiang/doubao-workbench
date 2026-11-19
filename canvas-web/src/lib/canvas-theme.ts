@@ -1,0 +1,138 @@
+export type CanvasColorTheme = "light" | "dark";
+export type CanvasBackgroundMode = "dots" | "lines" | "blank";
+
+const connectionPalette = { blue: "#64b4ff", blueDark: "#2787d4", gray: "#8b949e", grayLight: "#b8c0c8", grayDark: "#687582" } as const;
+
+export const canvasThemes = {
+    light: {
+        director: { card: "#f5f5f5", button: "#e5e5e5" },
+        canvas: {
+            background: "#ffffff",
+            dot: "rgba(15,23,42,.14)",
+            line: "rgba(15,23,42,.065)",
+            selectionFill: "rgba(17,24,39,.035)",
+            selectionStroke: "rgba(17,24,39,.42)",
+        },
+        node: {
+            label: "#4b5563",
+            fill: "#ffffff",
+            panel: "#ffffff",
+            stroke: "#e2e4e8",
+            activeStroke: "#111827",
+            placeholder: "#9ca3af",
+            text: "#111827",
+            muted: "#6b7280",
+            faint: "#9ca3af",
+        },
+        frame: {
+            fill: "rgba(17,24,39,.025)",
+            stroke: "rgba(17,24,39,.18)",
+            activeFill: "rgba(17,24,39,.05)",
+            activeStroke: "#9ca3af",
+            preview: "rgba(255,255,255,.82)",
+        },
+        connection: { stroke: connectionPalette.grayDark, active: connectionPalette.grayDark, flow: connectionPalette.blueDark },
+        toolbar: {
+            panel: "rgba(255,255,255,.94)",
+            border: "rgba(17,24,39,.10)",
+            item: "#4b5563",
+            itemHover: "rgba(17,24,39,.06)",
+            activeBg: "rgba(17,24,39,.10)",
+            activeText: "#111827",
+        },
+        spatial: {
+            surface: "rgba(255,255,255,.72)",
+            elevated: "rgba(255,255,255,.94)",
+            dropzone: "rgba(248,250,252,.78)",
+            glow: "rgba(79,110,232,.18)",
+            glowStrong: "rgba(79,110,232,.52)",
+            shadow: "rgba(15,23,42,.18)",
+        },
+        // 时间线/字幕组件语义色：轨道底、按类型区分的片段、标尺与播放头、字幕列表条目态。
+        timeline: {
+            trackFill: "#f6f8fb",
+            trackBorder: "rgba(17,24,39,.08)",
+            clipVideo: "rgba(79,110,232,.16)",
+            clipAudio: "rgba(16,185,129,.14)",
+            clipSubtitle: "rgba(245,158,11,.16)",
+            clipSelectedBorder: "#4f6ee8",
+            handle: "rgba(255,255,255,.72)",
+            rulerTick: "rgba(17,24,39,.28)",
+            rulerLabel: "#6b7280",
+            playhead: "#4f6ee8",
+            entryActive: "rgba(79,110,232,.10)",
+            entryHover: "rgba(17,24,39,.05)",
+        },
+        accent: {
+            primary: "#4f6ee8",
+            primarySoft: "rgba(79,110,232,.14)",
+            danger: "#f87171",
+        },
+    },
+    dark: {
+        director: { card: "#212121", button: "#373838" },
+        canvas: {
+            background: "#141414",
+            dot: "rgba(174,184,199,.18)",
+            line: "rgba(174,184,199,.06)",
+            selectionFill: "rgba(255,255,255,.045)",
+            selectionStroke: "rgba(255,255,255,.48)",
+        },
+        node: {
+            label: "#a3a3a3",
+            fill: "#181818",
+            panel: "#141414",
+            stroke: "rgba(255,255,255,.12)",
+            activeStroke: "#f1f1f1",
+            placeholder: "#737373",
+            text: "#ededed",
+            muted: "#a3a3a3",
+            faint: "#666666",
+        },
+        frame: {
+            fill: "rgba(255,255,255,.06)",
+            stroke: "rgba(255,255,255,.14)",
+            activeFill: "rgba(255,255,255,.10)",
+            activeStroke: "#9ca3af",
+            preview: "rgba(20,20,20,.94)",
+        },
+        connection: { stroke: connectionPalette.gray, active: connectionPalette.grayLight, flow: connectionPalette.blue },
+        toolbar: {
+            panel: "#262626",
+            border: "rgba(255,255,255,.1)",
+            item: "#d4d4d4",
+            itemHover: "rgba(255,255,255,.07)",
+            activeBg: "#454545",
+            activeText: "#f5f6f8",
+        },
+        spatial: {
+            surface: "rgba(22,22,22,.82)",
+            elevated: "rgba(15,15,15,.97)",
+            dropzone: "rgba(8,8,8,.9)",
+            glow: "rgba(107,120,190,.18)",
+            glowStrong: "rgba(143,155,214,.48)",
+            shadow: "rgba(0,0,0,.6)",
+        },
+        timeline: {
+            trackFill: "#101114",
+            trackBorder: "rgba(255,255,255,.08)",
+            clipVideo: "rgba(96,126,234,.22)",
+            clipAudio: "rgba(16,185,129,.20)",
+            clipSubtitle: "rgba(245,158,11,.20)",
+            clipSelectedBorder: "#8f9bd6",
+            handle: "rgba(255,255,255,.5)",
+            rulerTick: "rgba(255,255,255,.26)",
+            rulerLabel: "#a3a3a3",
+            playhead: "#8f9bd6",
+            entryActive: "rgba(96,126,234,.16)",
+            entryHover: "rgba(255,255,255,.06)",
+        },
+        accent: {
+            primary: "#8f9bd6",
+            primarySoft: "rgba(107,120,190,.2)",
+            danger: "#fb7185",
+        },
+    },
+} as const;
+
+export type CanvasTheme = (typeof canvasThemes)[CanvasColorTheme];

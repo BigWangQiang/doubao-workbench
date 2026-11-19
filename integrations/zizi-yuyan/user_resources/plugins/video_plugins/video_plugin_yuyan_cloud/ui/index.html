@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>屿砚 AI 视频插件</title>
+  <link rel="stylesheet" href="../../../plugin-sdk.css">
+  <style>
+    main { padding: 12px; }
+    label { display: block; margin: 12px 0 4px; }
+    input, select { box-sizing: border-box; width: 100%; min-height: 34px; }
+    button { margin-top: 10px; }
+    p { line-height: 1.5; overflow-wrap: anywhere; }
+    .specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>在字字动画点生成，屿砚网站处理任务，成片自动回到当前分镜。</p>
+    <label for="api_key">屿砚客户 API Key</label>
+    <input id="api_key" type="password" autocomplete="off" spellcheck="false" placeholder="在屿砚网站创建专用 Key">
+    <button id="refresh" type="button">读取网站模型</button>
+    <p id="status" role="status" aria-live="polite">填入 Key 后读取模型。此操作不生成视频。</p>
+    <label for="model">网站视频模型</label>
+    <select id="model" disabled><option value="">先读取网站模型</option></select>
+    <div class="specs">
+      <div><label for="ratio">画幅</label><select id="ratio" disabled></select></div>
+      <div><label for="duration">时长</label><select id="duration" disabled></select></div>
+      <div><label for="resolution">清晰度</label><select id="resolution" disabled></select></div>
+    </div>
+    <p>分镜进度随网站更新。等待中断后，在同一分镜点「重新生成」可继续查询已保存的原任务。新任务按网站规则计费。</p>
+  </main>
+  <script src="../../../plugin-sdk.js"></script>
+  <script>
+    (function () {
+      var fields = Object.fromEntries(['api_key', 'model', 'ratio', 'duration', 'resolution'].map(function (id) {
+        return [id, document.getElementById(id)];
+      }));
+      var refresh = document.getElementById('refresh');
+      var status = document.getElementById('status');
+      var saved = {};
+      var models = [];
+      var specs = { ratio: 'ratios', duration: 'durations', resolution: 'resolutions' };
+
+      function save(name, value) {
+        saved[name] = value;
+        PluginSDK.saveParam(name, value);
+      }
+
+      function loadSpecs(reset) {
+        var selected = models.find(function (item) { return item.id === fields.model.value; });
+        Object.keys(specs).forEach(function (name) {
+          var select = fields[name];
+          var values = selected ? selected[specs[name]].map(String) : [];
+          select.replaceChildren(new Option('模型默认', ''));
+          values.forEach(function (value) {
+            select.add(new Option(name === 'duration' ? value + ' 秒' : value, value));
+          });
+          select.value = !reset && values.includes(String(saved[name])) ? String(saved[name]) : '';
+          select.disabled = !values.length;
+          if (reset || (selected && saved[name] && !select.value)) save(name, '');
+        });
+      }
+
+      function listModels() {
+        fields.api_key.value = fields.api_key.value.trim();
+        if (!fields.api_key.value) {
+          status.textContent = '请先填入屿砚客户 API Key。';
+          return;
+        }
+        fields.api_key.disabled = true;
+        refresh.disabled = true;
+        fields.model.disabled = true;
+        status.textContent = '正在读取屿砚网站模型…';
+        PluginSDK.sendAction('list_models', { api_key: fields.api_key.value });
+      }
+
+      PluginSDK.onAction('list_models', function (response) {
+        fields.api_key.disabled = false;
+        refresh.disabled = false;
+        models = response.ok ? response.models : [];
+        fields.model.replaceChildren(new Option('请选择视频模型', ''));
+        models.forEach(function (item) {
+          fields.model.add(new Option(item.label + ' · ' + item.model + (item.price ? '（' + item.price + '）' : ''), item.id));
+        });
+        var exists = models.some(function (item) { return item.id === saved.model; });
+        fields.model.value = exists ? saved.model : '';
+        fields.model.disabled = !models.length;
+        if (response.ok) {
+          if (saved.api_key !== fields.api_key.value) save('api_key', fields.api_key.value);
+          if (!exists && saved.model) save('model', '');
+        }
+        loadSpecs(false);
+        status.textContent = response.ok ? (models.length ? '已读取 ' + models.length + ' 个可用视频模型。请确认模型和规格。' : '当前账号没有可用的屿砚视频模型。') : response.error;
+      });
+
+      fields.model.addEventListener('change', function () { save('model', fields.model.value); loadSpecs(true); });
+      fields.api_key.addEventListener('input', function () {
+        if (saved.api_key && fields.api_key.value.trim() !== saved.api_key) {
+          save('api_key', '');
+          save('model', '');
+          models = [];
+          fields.model.replaceChildren(new Option('先读取网站模型', ''));
+          fields.model.disabled = true;
+          loadSpecs(true);
+        }
+      });
+      Object.keys(specs).forEach(function (name) {
+        fields[name].addEventListener('change', function () { save(name, fields[name].value); });
+      });
+      refresh.addEventListener('click', listModels);
+      PluginSDK.onReady(function (params) {
+        saved = params || {};
+        fields.api_key.value = saved.api_key || '';
+        loadSpecs(false);
+        if (fields.api_key.value) listModels();
+      });
+    }());
+  </script>
+</body>
+</html>

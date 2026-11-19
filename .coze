@@ -1,0 +1,18 @@
+[project]
+requires = [ "nodejs-24" ]
+template = "vite"
+version = "legacy"
+appliedPatches = [ "vite/validate@0.0.20" ]
+
+[dev]
+build = [ "pnpm", "install" ]
+run = [ "pnpm", "run", "build:main" ]
+validate = [ "bash", "./scripts/validate.sh" ]
+
+[deploy]
+build = [ "pnpm", "run", "build" ]
+run = [
+  "sh",
+  "-c",
+  "echo 'Electron 桌面应用已构建完成，请在本地机器上运行: pnpm start'"
+]

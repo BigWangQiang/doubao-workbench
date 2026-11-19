@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "豆包画布视频解析器",
+  "version": "1.0.1",
+  "description": "解析豆包画布中视频的原始高清无水印下载地址（支持一键下载）",
+  "permissions": ["webRequest", "scripting", "downloads", "storage", "debugger"],
+  "host_permissions": ["*://*.doubao.com/*", "*://*.snssdk.com/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["*://www.doubao.com/*"],
+      "js": ["content.js"],
+      "css": ["panel.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": { "default_title": "解析当前豆包画布视频" }
+}

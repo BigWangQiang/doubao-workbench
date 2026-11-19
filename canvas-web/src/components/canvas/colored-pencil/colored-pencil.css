@@ -1,0 +1,93 @@
+.colored-pencil-dialog {
+    --pencil-surface: var(--workspace-surface-strong);
+    --pencil-inset: var(--muted);
+    --pencil-border: var(--border-semantic);
+    --pencil-selected: var(--workspace-accent);
+    --pencil-selected-ink: var(--workspace-surface-strong);
+    --pencil-selection-border: var(--workspace-border-strong);
+    --pencil-media-height: calc(var(--space-24) * 3);
+    --pencil-scroll-height: 60dvh;
+}
+
+.pencil-shell { display: flex; flex-direction: column; min-height: 0; max-height: 88dvh; background: var(--pencil-surface); color: var(--fg); }
+.pencil-header { display: flex; flex-shrink: 0; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5); }
+.pencil-heading-icon { display: grid; flex-shrink: 0; place-items: center; width: var(--space-10); height: var(--space-10); border-radius: var(--r-lg); background: var(--workspace-accent-soft); color: var(--pencil-selected); }
+.pencil-heading-icon svg { width: var(--space-5); height: var(--space-5); }
+.pencil-heading { flex: 1; min-width: 0; }
+.pencil-heading h2 { margin: 0; font-size: var(--fs-heading-lg); font-weight: 600; }
+.pencil-heading p { margin: var(--space-half) 0 0; color: var(--muted-foreground); font-size: var(--fs-caption); }
+.pencil-summary { display: flex; flex-shrink: 0; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-2) var(--space-5); border-block: 1px solid var(--pencil-border); color: var(--muted-foreground); font-size: var(--fs-caption); }
+.pencil-summary strong { margin-inline: var(--space-1); color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+.pencil-model { display: inline-flex; align-items: center; gap: var(--space-2); }
+.pencil-model svg { width: var(--space-3); height: var(--space-3); }
+.pencil-model > span { padding-left: var(--space-2); border-left: 1px solid var(--pencil-border); }
+.pencil-alert { padding: var(--space-3) var(--space-5) 0; }
+.pencil-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; max-height: var(--pencil-scroll-height); padding: var(--space-3) var(--space-5) var(--space-4); }
+.pencil-loading { display: flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4); font-size: var(--fs-body); }
+.pencil-loading svg { width: var(--space-4); height: var(--space-4); }
+.pencil-empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-16) var(--space-4); color: var(--muted-foreground); }
+.pencil-empty strong { color: var(--fg); }
+.pencil-item { padding-block: var(--space-4); border-bottom: 1px solid var(--pencil-border); }
+.pencil-item:first-child { padding-top: 0; }
+.pencil-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.pencil-item-header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+.pencil-item-name { font-size: var(--fs-body); font-weight: 600; }
+.pencil-selection-state { margin-left: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--r-sm); background: var(--pencil-inset); color: var(--muted-foreground); font-size: var(--fs-caption); font-weight: 500; white-space: nowrap; }
+.pencil-item.is-selected .pencil-selection-state { background: var(--workspace-accent-soft); color: var(--pencil-selected); }
+.pencil-item.is-selected .pencil-media { border-color: var(--pencil-selection-border); }
+.pencil-item-actions { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-left: auto; }
+.pencil-item-actions svg, .pencil-footer-actions svg, .pencil-header .ant-btn svg { width: var(--space-4); height: var(--space-4); }
+.pencil-applied { display: inline-flex; align-items: center; gap: var(--space-1); padding-inline: var(--space-2); border-left: 1px solid var(--pencil-border); color: var(--status-success); font-size: var(--fs-caption); white-space: nowrap; }
+.pencil-applied svg { width: var(--space-4); height: var(--space-4); }
+.pencil-item-progress { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--pencil-selected); font-size: var(--fs-caption); }
+.pencil-item-progress svg { width: var(--space-4); height: var(--space-4); }
+.pencil-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.pencil-comparison figure { min-width: 0; margin: 0; }
+.pencil-comparison figcaption { display: flex; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-2); color: var(--fg); font-size: var(--fs-caption); font-weight: 600; }
+.pencil-comparison figcaption span { color: var(--muted-foreground); font-weight: 400; }
+.pencil-media { display: flex; align-items: center; justify-content: center; height: var(--pencil-media-height); overflow: hidden; border: 1px solid var(--pencil-border); border-radius: var(--r-lg); background: var(--pencil-inset); }
+.pencil-media img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.pencil-placeholder { display: flex; align-items: center; flex-direction: column; justify-content: center; gap: var(--space-3); max-width: 100%; padding: var(--space-4); text-align: center; color: var(--muted-foreground); }
+.pencil-placeholder > svg { width: var(--space-6); height: var(--space-6); }
+.pencil-placeholder strong { color: var(--fg); font-size: var(--fs-body); font-weight: 500; }
+.pencil-placeholder span { font-size: var(--fs-caption); }
+.pencil-placeholder .ant-progress { width: calc(var(--space-24) * 1.5); max-width: 100%; margin: 0; }
+.pencil-item-error { margin-top: var(--space-3); color: var(--status-error); font-size: var(--fs-caption); overflow-wrap: anywhere; }
+.pencil-footer { display: flex; flex-shrink: 0; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-top: 1px solid var(--pencil-border); }
+.pencil-cost { display: flex; flex: 1; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.pencil-cost strong { font-size: var(--fs-body); font-weight: 600; }
+.pencil-cost span { color: var(--muted-foreground); font-size: var(--fs-caption); }
+.pencil-footer-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.pencil-footer-actions .ant-btn { min-height: var(--space-10); padding-inline: var(--space-4); }
+.pencil-shell button:focus:not(:focus-visible) { outline: none; box-shadow: none; }
+.pencil-shell button:focus-visible { outline: 2px solid var(--pencil-selected); outline-offset: var(--space-half); }
+
+/* AntD 6 的勾号位于 checkbox 本体；用反色描边避免深色主题白底白勾。 */
+.colored-pencil-dialog .pencil-selection.ant-checkbox-wrapper { align-items: center; min-width: 0; max-width: 100%; min-height: calc(var(--space-10) + var(--space-1)); }
+.colored-pencil-dialog .pencil-selection .ant-checkbox { width: var(--space-5); height: var(--space-5); border-radius: var(--r-xs); }
+.colored-pencil-dialog .pencil-selection .ant-checkbox::after { top: calc(var(--space-5) / 2 - 1px); inset-inline-start: calc(var(--space-5) / 4 - 1px); width: calc(var(--space-5) * 5 / 14); height: calc(var(--space-5) * 8 / 14); }
+.colored-pencil-dialog .pencil-selection .ant-checkbox-checked:not(.ant-checkbox-disabled),
+.colored-pencil-dialog .pencil-selection:hover .ant-checkbox-checked:not(.ant-checkbox-disabled) { border-color: var(--pencil-selected); background: var(--pencil-selected); }
+.colored-pencil-dialog .pencil-selection .ant-checkbox-checked:not(.ant-checkbox-disabled)::after { border-color: var(--pencil-selected-ink); }
+
+@media (max-width: 767px) {
+    .colored-pencil-dialog { --pencil-media-height: calc(var(--space-24) * 1.5); --pencil-scroll-height: 56dvh; }
+    .pencil-header, .pencil-footer { padding: var(--space-4); }
+    .pencil-content { padding: var(--space-3) var(--space-4); }
+    .pencil-summary, .pencil-alert { padding-inline: var(--space-4); }
+    .pencil-heading-icon { display: none; }
+    .pencil-heading h2 { font-size: var(--fs-heading); }
+    .pencil-heading p { font-size: var(--fs-caption); }
+    .pencil-footer-actions { width: 100%; }
+    .pencil-footer-actions .ant-btn { flex: 1; min-height: var(--space-10); }
+    .pencil-comparison figcaption { flex-wrap: wrap; }
+}
+
+@media (max-width: 479px) {
+    .pencil-item-actions { width: 100%; justify-content: flex-end; }
+    .pencil-cost { flex-basis: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pencil-shell .animate-spin, .pencil-shell .ant-progress-bg::before { animation: none; }
+}

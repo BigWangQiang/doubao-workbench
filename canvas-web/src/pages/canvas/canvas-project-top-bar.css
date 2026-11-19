@@ -1,0 +1,179 @@
+/* 胶囊顶栏的唯一样式来源，颜色跟随画布，品牌标记保持暖金色。 */
+.canvas-project-topbar {
+    --toolbar-gold-300: #ebd5ae;
+    --toolbar-gold-700: #806131;
+    --canvas-brand-accent: var(--toolbar-gold-700);
+    --canvas-toolbar-surface: var(--cn-spatial-elevated);
+    --canvas-toolbar-edge: var(--cn-spatial-toolbar-border);
+    --canvas-toolbar-ink: var(--cn-text);
+    --canvas-toolbar-muted: var(--cn-muted);
+    --canvas-toolbar-hover: color-mix(in srgb, var(--cn-text) 7%, transparent);
+    --canvas-brand-backdrop: color-mix(in srgb, var(--canvas-brand-accent) 8%, var(--canvas-toolbar-surface));
+    --canvas-toolbar-title-width: calc(var(--space-20) * 2 + var(--space-12));
+    top: var(--space-4);
+    inset-inline: var(--canvas-inset-x);
+    gap: var(--space-4);
+}
+
+.dark .canvas-project-topbar {
+    --canvas-brand-accent: var(--toolbar-gold-300);
+}
+
+.canvas-project-title-cluster {
+    flex: 0 1 auto;
+    width: max-content;
+    max-width: 100%;
+    min-height: calc(var(--space-10) + var(--space-1));
+    gap: var(--space-1-half);
+    padding: var(--space-1);
+    border: var(--stroke-1) solid var(--canvas-toolbar-edge);
+    border-radius: var(--r-full);
+    background: var(--canvas-toolbar-surface);
+    color: var(--canvas-toolbar-ink);
+    box-shadow: var(--elevation-card-hover);
+}
+
+.canvas-project-top-actions { flex: none; }
+
+.canvas-project-menu-button {
+    display: inline-flex;
+    height: var(--space-8);
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    padding-inline: var(--space-1-half);
+    border: 0;
+    border-radius: var(--r-full);
+    background: var(--canvas-brand-backdrop);
+    color: var(--canvas-toolbar-muted);
+    cursor: pointer;
+    transition: background var(--motion-dur-fast) var(--motion-ease-out);
+}
+
+.canvas-project-menu-button > svg { flex: none; }
+
+.canvas-project-brand-mark {
+    display: block;
+    width: var(--space-6);
+    height: var(--space-6);
+    flex: none;
+    background: var(--canvas-brand-accent);
+    -webkit-mask: url("/logo.svg") center / var(--space-5) no-repeat;
+    mask: url("/logo.svg") center / var(--space-5) no-repeat;
+}
+
+.canvas-project-workspace-divider,
+.canvas-project-search-divider {
+    width: var(--stroke-1);
+    height: var(--space-4);
+    flex: none;
+    background: var(--canvas-toolbar-edge);
+}
+
+.canvas-project-workspace-name {
+    min-width: 0;
+    max-width: calc(var(--space-12) * 3);
+    padding-inline: var(--space-1);
+    color: var(--canvas-toolbar-ink);
+    font-size: var(--fs-body);
+}
+
+.canvas-project-title-block {
+    flex: 0 1 auto;
+    padding-inline: var(--space-1);
+    color: var(--canvas-toolbar-ink);
+}
+
+.canvas-project-title-text {
+    min-width: 0;
+    max-width: var(--canvas-toolbar-title-width);
+    min-height: var(--space-8);
+    color: inherit;
+    font-size: var(--fs-body);
+    cursor: pointer;
+}
+
+.canvas-toolbar-title-input {
+    width: auto;
+    min-width: var(--space-12);
+    max-width: min(100%, var(--canvas-toolbar-title-width));
+    height: var(--space-8);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: var(--fs-body);
+    font-weight: 600;
+    caret-color: var(--canvas-brand-accent);
+}
+
+.canvas-project-search-button,
+.canvas-project-rename-button {
+    display: grid;
+    width: var(--space-8);
+    height: var(--space-8);
+    flex: none;
+    place-items: center;
+    border: 0;
+    border-radius: var(--r-full);
+    background: transparent;
+    color: var(--canvas-toolbar-muted);
+    cursor: pointer;
+    transition: background var(--motion-dur-fast) var(--motion-ease-out), color var(--motion-dur-fast) var(--motion-ease-out);
+}
+
+.canvas-project-rename-button { width: calc(var(--space-6) + var(--space-1)); }
+
+.canvas-project-menu-button:hover,
+.canvas-project-menu-button[aria-expanded="true"],
+.canvas-project-search-button:hover,
+.canvas-project-rename-button:hover {
+    background: var(--canvas-toolbar-hover);
+    color: var(--canvas-toolbar-ink);
+}
+
+.canvas-project-title-cluster :is(button, a, input):focus-visible {
+    outline: var(--stroke-2) solid var(--canvas-brand-accent);
+    outline-offset: var(--space-half);
+}
+
+/* AntD 6 下拉菜单：限定到画布菜单；important 对齐已有全局浮层规则的优先级。 */
+.canvas-project-menu {
+    --canvas-menu-surface: color-mix(in srgb, var(--cn-spatial-elevated) 94%, var(--cn-text));
+    --canvas-menu-hover: color-mix(in srgb, var(--cn-text) 7%, transparent);
+    --canvas-menu-width: calc(var(--space-24) * 2 + var(--space-6));
+}
+
+.canvas-project-menu .ant-dropdown-menu {
+    width: var(--canvas-menu-width);
+    padding: var(--space-1-half);
+    border: var(--stroke-1) solid var(--cn-spatial-toolbar-border) !important;
+    border-radius: var(--r-3xl) !important;
+    background: var(--canvas-menu-surface) !important;
+    box-shadow: var(--elevation-overlay) !important;
+}
+
+.canvas-project-menu .ant-dropdown-menu-item {
+    min-height: var(--space-12);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--r-lg);
+    color: var(--cn-text);
+    font-size: var(--fs-body);
+    font-weight: 500;
+}
+
+.canvas-project-menu .ant-dropdown-menu-item:hover,
+.canvas-project-menu .ant-dropdown-menu-item-active { background: var(--canvas-menu-hover); }
+.canvas-project-menu .ant-dropdown-menu-item-divider { margin: var(--space-1) 0; background: var(--cn-spatial-toolbar-border); }
+
+@media (max-width: 720px) {
+    .canvas-project-topbar { gap: var(--space-2); }
+    .canvas-project-title-cluster { gap: var(--space-1); }
+    .canvas-project-workspace-name,
+    .canvas-project-workspace-divider { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .canvas-project-title-cluster button { transition: none; }
+}

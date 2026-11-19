@@ -1,0 +1,34 @@
+.typed-delete-modal {
+    --delete-dialog-surface: var(--card);
+    --delete-dialog-text: var(--foreground);
+    --delete-dialog-muted: var(--muted-foreground);
+    --delete-dialog-border: var(--border-semantic);
+    --delete-dialog-input: var(--muted);
+}
+/* 与全局第三方覆盖同层，只调整输入确认的删除弹窗。 */
+@layer utilities {
+    .typed-delete-modal .ant-modal-container { border: 1px solid var(--delete-dialog-border) !important; border-radius: var(--r-3xl) !important; padding: var(--space-8) !important; background: var(--delete-dialog-surface) !important; color: var(--delete-dialog-text); box-shadow: var(--shadow-xl) !important; }
+    .typed-delete-modal .ant-modal-header { background: transparent !important; margin-bottom: var(--space-6); }
+    .typed-delete-modal .ant-modal-title,
+    .typed-delete-modal .ant-modal-confirm-title { color: var(--delete-dialog-text) !important; font-size: var(--fs-heading-lg) !important; font-weight: 600; }
+    .typed-delete-modal .ant-modal-confirm-body { display: block; }
+    .typed-delete-modal .ant-modal-confirm-content { margin-top: var(--space-6) !important; margin-inline-start: 0 !important; }
+    .typed-delete-modal .ant-modal-footer,
+    .typed-delete-modal .ant-modal-confirm-btns { margin-top: var(--space-8); }
+    .typed-delete-modal .ant-input-outlined { min-height: calc(var(--space-12) + var(--space-2)); border: 1px solid var(--delete-dialog-border) !important; border-radius: var(--r-lg) !important; padding-inline: var(--space-4); background: var(--delete-dialog-input) !important; color: var(--delete-dialog-text) !important; box-shadow: none !important; }
+    .typed-delete-modal .ant-input-outlined:focus { border-color: var(--delete-dialog-muted) !important; }
+    .typed-delete-modal .ant-modal-close { top: var(--space-6); right: var(--space-6); color: var(--delete-dialog-muted); }
+}
+.delete-confirmation-body { color: var(--delete-dialog-text); }
+.delete-confirmation-question { margin: 0; font-size: var(--fs-body-lg); line-height: 1.7; overflow-wrap: anywhere; }
+.delete-confirmation-question strong { font-weight: 600; }
+.delete-confirmation-description { margin-top: var(--space-2); color: var(--delete-dialog-muted); font-size: var(--fs-body); line-height: 1.8; }
+.delete-confirmation-field { display: block; margin-top: var(--space-6); }
+.delete-confirmation-field > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.delete-confirmation-hint { margin: var(--space-4) 0 0; color: var(--delete-dialog-muted); font-size: var(--fs-caption); line-height: 1.7; }
+.cancel-confirmation-keyword { color: var(--destructive); font-size: var(--fs-body); font-weight: 700; }
+.cancel-confirmation-input { --delete-dialog-text: var(--destructive); font-weight: 700; }
+.delete-confirmation-error { margin: var(--space-3) 0 0; color: var(--destructive); font-size: var(--fs-caption); }
+@media (max-width: 760px) {
+    @layer utilities { .typed-delete-modal .ant-modal-container { padding: var(--space-5) !important; } }
+}

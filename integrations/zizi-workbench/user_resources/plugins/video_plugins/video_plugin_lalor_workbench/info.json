@@ -1,0 +1,9 @@
+{
+  "name": "Lalor 工作台视频插件",
+  "display_name": "Lalor 工作台视频插件",
+  "version": "2.1.1",
+  "description": "直接调用本机 Lalor 工作台的豆包/Dola 视频账号池，支持参考图、视频、音频及成片回传，无需 CLI。",
+  "author": "Lalor",
+  "api_version": 2,
+  "type": "video"
+}

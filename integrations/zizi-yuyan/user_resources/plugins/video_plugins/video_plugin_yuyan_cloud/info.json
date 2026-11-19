@@ -1,0 +1,9 @@
+{
+  "name": "屿砚 AI 视频插件",
+  "display_name": "屿砚 AI 视频插件",
+  "version": "1.1.0",
+  "description": "将当前分镜提交到屿砚 AI 视频生成，完成后自动回填成片。",
+  "author": "屿砚 AI",
+  "api_version": 2,
+  "type": "video"
+}

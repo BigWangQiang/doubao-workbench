@@ -1,0 +1,154 @@
+.studio-ui .workspace-full-page.zizi-plugin-page {
+  overflow-y: auto;
+}
+
+.zizi-plugin-content {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
+
+.zizi-package-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  color: var(--studio-text-muted);
+  font-size: 12px;
+}
+
+.zizi-plugin-content > .ant-alert {
+  margin-bottom: 16px;
+}
+
+.zizi-saved-path {
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+.zizi-connection {
+  padding: 20px;
+  border: 1px solid var(--studio-border);
+  border-radius: var(--studio-radius-md);
+  background: var(--studio-surface);
+}
+
+.zizi-connection-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.zizi-plugin-page h2 {
+  margin: 0 0 8px;
+  color: var(--studio-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.zizi-plugin-page h2 .anticon {
+  margin-right: 8px;
+  color: var(--studio-accent);
+}
+
+.zizi-plugin-page p {
+  margin: 0;
+  color: var(--studio-text-secondary);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.zizi-status-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--studio-border);
+}
+
+.zizi-status-list dt {
+  margin-bottom: 8px;
+  color: var(--studio-text-muted);
+  font-size: 12px;
+}
+
+.zizi-status-list dd {
+  margin: 0;
+  min-height: 32px;
+  color: var(--studio-text);
+  font-size: 13px;
+}
+
+.zizi-install {
+  margin: 28px 0 20px;
+}
+
+.zizi-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zizi-steps > li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--studio-border);
+}
+
+.zizi-step-number {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--studio-accent);
+  background: var(--studio-surface-raised);
+  border-radius: var(--studio-radius-md);
+  font-weight: 600;
+}
+
+.zizi-steps h3 {
+  margin: 3px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--studio-text);
+}
+
+.zizi-install-path {
+  margin: 12px 0;
+  padding: 12px 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--studio-bg-alt);
+  border-radius: var(--studio-radius-sm);
+  color: var(--studio-text-secondary);
+  font-size: 12px;
+  line-height: 1.8;
+  user-select: text;
+}
+
+.zizi-plugin-page p.zizi-hint {
+  font-size: 12px;
+  color: var(--studio-text-muted);
+}
+
+.zizi-complete {
+  margin-top: 12px;
+  color: var(--studio-success);
+  font-size: 13px;
+}
+
+.zizi-faq {
+  background: var(--studio-surface);
+}
+
+@media (max-width: 800px) {
+  .zizi-status-list { grid-template-columns: 1fr; }
+  .zizi-connection-heading { flex-direction: column; align-items: flex-start; }
+  .zizi-connection { padding: 16px; }
+}

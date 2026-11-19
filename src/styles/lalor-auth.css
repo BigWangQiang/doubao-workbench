@@ -1,0 +1,181 @@
+/* Lalor membership gate and local account shop. Keep the purchase surface
+   inside the existing glass workspace language; sensitive delivery content is
+   represented by metadata only. */
+.studio-ui .lalor-auth-loading-shell,
+.studio-ui .lalor-auth-gate-shell {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 10%, rgba(111, 91, 228, 0.18), transparent 42%), var(--studio-bg);
+}
+
+.studio-ui .lalor-auth-loading {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  color: var(--studio-text-secondary);
+  font-size: 15px;
+}
+
+.studio-ui .lalor-pairing-shell {
+  display: grid;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  place-items: safe center;
+  padding: 32px 18px;
+}
+
+.studio-ui .lalor-pairing-card {
+  width: min(560px, 100%);
+  border: 1px solid var(--studio-border-strong);
+  border-radius: 20px;
+  background: rgba(22, 25, 38, 0.86);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.32);
+}
+
+.studio-ui .lalor-pairing-card .ant-card-body { padding: 36px; }
+.studio-ui .lalor-pairing-brand { display: flex; align-items: center; gap: 10px; color: var(--studio-text); font-weight: 700; letter-spacing: 0.02em; }
+.studio-ui .lalor-pairing-brand-mark { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 10px; background: linear-gradient(135deg, #a58cff, #5d7cff); color: #fff; font-size: 16px; }
+.studio-ui .lalor-pairing-icon { display: grid; width: 56px; height: 56px; margin: 32px 0 16px; place-items: center; border-radius: 16px; background: rgba(154, 140, 255, 0.14); color: #b6a9ff; font-size: 26px; }
+.studio-ui .lalor-pairing-card h1 { margin-bottom: 8px; color: var(--studio-text); }
+.studio-ui .lalor-pairing-lead { color: var(--studio-text-secondary); line-height: 1.7; }
+.studio-ui .lalor-pairing-alert { margin: 18px 0; }
+.studio-ui .lalor-pairing-label { display: block; margin: 22px 0 8px; color: var(--studio-text); font-size: 13px; font-weight: 600; }
+.studio-ui .lalor-pairing-help { display: block; margin-top: 8px; line-height: 1.55; }
+.studio-ui .lalor-pairing-actions { display: flex; margin-top: 24px; }
+.studio-ui .lalor-pairing-actions .ant-btn { min-height: 42px; }
+.studio-ui .lalor-pairing-security { display: flex; align-items: center; gap: 7px; margin-top: 26px; font-size: 12px; }
+
+.studio-ui .workspace-rail-avatar { width: 34px; height: 34px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; object-fit: cover; }
+
+.studio-ui .lalor-personal-page { overflow: auto; padding: 28px 32px 40px; }
+.studio-ui .lalor-personal-header { align-items: flex-start; }
+.studio-ui .lalor-personal-header .ant-typography { margin-bottom: 4px; }
+.studio-ui .lalor-personal-grid { display: grid; grid-template-columns: minmax(280px, 0.8fr) minmax(420px, 1.6fr); gap: 18px; align-items: stretch; }
+.studio-ui .lalor-profile-card,
+.studio-ui .lalor-shop-card,
+.studio-ui .lalor-payment-card,
+.studio-ui .lalor-history-card { border: 1px solid var(--studio-border); border-radius: 16px; background: linear-gradient(145deg, rgba(29, 34, 53, 0.88), rgba(18, 22, 35, 0.82)); box-shadow: var(--studio-shadow-soft); }
+.studio-ui .lalor-profile-card,
+.studio-ui .lalor-shop-card { height: 100%; }
+.studio-ui .lalor-profile-card .ant-card-body,
+.studio-ui .lalor-shop-card .ant-card-body,
+.studio-ui .lalor-history-card .ant-card-body { padding: 22px; }
+.studio-ui .lalor-profile-card { position: relative; overflow: hidden; }
+.studio-ui .lalor-profile-card::before { position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--studio-accent), #5d7cff, var(--studio-success)); content: ''; }
+.studio-ui .lalor-profile-main { display: flex; align-items: center; gap: 16px; }
+.studio-ui .lalor-profile-main h3 { margin: 0 0 2px; color: var(--studio-text); }
+.studio-ui .lalor-profile-stats { display: grid; gap: 12px; margin-top: 24px; }
+.studio-ui .lalor-profile-stats > div { display: grid; grid-template-columns: 20px minmax(70px, 1fr) auto; align-items: center; gap: 8px; min-height: 40px; border-top: 1px solid var(--studio-border); color: var(--studio-text-secondary); }
+.studio-ui .lalor-profile-stats > div > span { font-size: 12px; }
+.studio-ui .lalor-profile-stats strong { color: var(--studio-text); font-size: 13px; text-align: right; }
+.studio-ui .lalor-shop-card .ant-card-head { border-bottom-color: var(--studio-border); }
+.studio-ui .lalor-shop-card .ant-card-head-title { color: var(--studio-text); }
+.studio-ui .lalor-history-card { margin-top: 20px; }
+.studio-ui .lalor-history-card .ant-card-head { border-bottom-color: var(--studio-border); }
+.studio-ui .lalor-history-card .ant-card-head-title { color: var(--studio-text); }
+.studio-ui .lalor-shop-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.studio-ui .lalor-shop-loading { display: flex; min-height: 190px; align-items: center; justify-content: center; gap: 10px; color: var(--studio-text-secondary); }
+.studio-ui .lalor-product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
+.studio-ui .lalor-product-card { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; grid-template-rows: auto auto; gap: 2px 10px; width: 100%; min-height: 96px; padding: 14px; border: 1px solid var(--studio-border); border-radius: 12px; background: rgba(255, 255, 255, 0.025); color: var(--studio-text); text-align: left; cursor: pointer; transition: border-color 180ms ease, background 180ms ease, transform 180ms ease; }
+.studio-ui .lalor-product-card:hover { border-color: rgba(154, 140, 255, 0.52); background: rgba(154, 140, 255, 0.08); transform: translateY(-1px); }
+.studio-ui .lalor-product-card.is-selected { border-color: #a58cff; background: rgba(154, 140, 255, 0.14); box-shadow: 0 0 0 2px rgba(165, 140, 255, 0.16); }
+.studio-ui .lalor-product-icon { display: grid; width: 34px; height: 34px; grid-row: 1 / span 2; place-items: center; border-radius: 10px; background: rgba(154, 140, 255, 0.16); color: #b6a9ff; font-size: 17px; }
+.studio-ui .lalor-product-copy { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+.studio-ui .lalor-product-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.studio-ui .lalor-product-copy small { overflow: hidden; color: var(--studio-text-muted); text-overflow: ellipsis; white-space: nowrap; }
+.studio-ui .lalor-product-prices { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.studio-ui .lalor-product-prices em { color: #c7bcff; font-size: 12px; font-style: normal; font-weight: 650; white-space: nowrap; }
+.studio-ui .lalor-product-stock { grid-column: 2 / span 2; color: var(--studio-text-muted); font-size: 11px; }
+.studio-ui .lalor-purchase-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--studio-border); }
+.studio-ui .lalor-purchase-footer .ant-checkbox-wrapper { color: var(--studio-text-secondary); font-size: 12px; }
+.studio-ui .lalor-inline-error { margin: 0 0 16px; padding: 10px 12px; border: 1px solid rgba(255, 99, 120, 0.3); border-radius: 9px; background: rgba(255, 99, 120, 0.08); color: #ffb4bf; }
+.studio-ui .lalor-payment-card { margin-top: 18px; }
+.studio-ui .lalor-payment-card .ant-card-head { border-bottom-color: var(--studio-border); }
+.studio-ui .lalor-payment-card .ant-card-head-title { color: var(--studio-text); }
+.studio-ui .lalor-payment-status-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.studio-ui .lalor-payment-instructions { display: grid; gap: 12px; margin-top: 12px; color: var(--studio-text-secondary); }
+.studio-ui .lalor-payment-target { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 10px; border: 1px dashed var(--studio-border-strong); border-radius: 9px; background: rgba(0, 0, 0, 0.12); }
+.studio-ui .lalor-payment-target .ant-typography { max-width: min(600px, 100%); }
+.studio-ui .lalor-payment-qr,
+.lalor-cash-payment-modal .lalor-payment-qr { display: grid; justify-items: center; gap: 8px; padding: 18px; border: 1px solid var(--studio-border-strong, rgba(255, 255, 255, 0.16)); border-radius: 14px; background: rgba(255, 255, 255, 0.045); text-align: center; }
+.studio-ui .lalor-payment-qr .ant-qrcode,
+.lalor-cash-payment-modal .lalor-payment-qr .ant-qrcode { overflow: hidden; border-radius: 10px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28); }
+.studio-ui .lalor-payment-qr strong,
+.lalor-cash-payment-modal .lalor-payment-qr strong { margin-top: 4px; color: var(--studio-text, #f3f3fa); font-size: 15px; }
+.studio-ui .lalor-payment-qr span,
+.lalor-cash-payment-modal .lalor-payment-qr span { color: var(--studio-text-secondary, #b8bbca); font-size: 12px; }
+.studio-ui .lalor-payment-qr-loading,
+.lalor-cash-payment-modal .lalor-payment-qr-loading { display: flex; min-height: 252px; align-items: center; justify-content: center; gap: 10px; border: 1px dashed var(--studio-border-strong, rgba(255, 255, 255, 0.16)); border-radius: 14px; color: var(--studio-text-secondary, #b8bbca); }
+.studio-ui .lalor-payment-page-entry,
+.lalor-cash-payment-modal .lalor-payment-page-entry { display: grid; justify-items: center; gap: 12px; padding: 26px 18px; border: 1px solid var(--studio-border-strong, rgba(255, 255, 255, 0.16)); border-radius: 14px; background: rgba(138, 124, 255, 0.08); color: var(--studio-text, #f3f3fa); text-align: center; }
+.studio-ui .lalor-payment-page-entry > .anticon,
+.lalor-cash-payment-modal .lalor-payment-page-entry > .anticon { color: #a99dff; font-size: 28px; }
+.studio-ui .lalor-delivery-actions { display: grid; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--studio-border); }
+.studio-ui .lalor-delivery-meta { display: flex; align-items: center; gap: 8px; color: var(--studio-success); font-size: 13px; }
+.studio-ui .lalor-shop-note { margin-top: 16px; font-size: 12px; }
+.studio-ui .lalor-history-loading { display: flex; min-height: 120px; align-items: center; justify-content: center; gap: 10px; color: var(--studio-text-secondary); }
+.studio-ui .lalor-history-list { display: grid; gap: 8px; }
+.studio-ui .lalor-history-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 62px; padding: 10px 12px; border: 1px solid var(--studio-border); border-radius: 10px; background: rgba(255, 255, 255, 0.025); cursor: pointer; transition: border-color 160ms ease, background 160ms ease, transform 160ms ease; }
+.studio-ui .lalor-history-row:hover { border-color: rgba(154, 140, 255, 0.46); background: rgba(154, 140, 255, 0.07); transform: translateY(-1px); }
+.studio-ui .lalor-history-row:focus-visible { outline: 2px solid #a99dff; outline-offset: 2px; }
+.studio-ui .lalor-history-icon { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 10px; background: rgba(154, 140, 255, 0.14); color: var(--studio-accent); }
+.studio-ui .lalor-history-copy { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+.studio-ui .lalor-history-copy strong { overflow: hidden; color: var(--studio-text); text-overflow: ellipsis; white-space: nowrap; }
+.studio-ui .lalor-history-copy span { overflow: hidden; color: var(--studio-text-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.studio-ui .lalor-history-meta { display: flex; min-width: 94px; flex-direction: column; align-items: flex-end; gap: 4px; color: var(--studio-text-secondary); font-size: 12px; }
+.studio-ui .lalor-history-foot { display: block; margin-top: 12px; font-size: 12px; }
+
+.lalor-delivery-choice-modal .ant-modal-title > span { display: inline-flex; align-items: center; gap: 8px; }
+.lalor-delivery-choice-modal .ant-modal-title .anticon { color: #45d695; }
+.lalor-delivery-choice { padding-top: 4px; }
+.lalor-delivery-choice > .ant-typography { margin-bottom: 0; color: #b8bbca; line-height: 1.7; }
+.lalor-delivery-choice-modal .lalor-delivery-actions { display: grid; gap: 16px; margin-top: 18px; padding: 18px; border: 1px solid rgba(138, 124, 255, 0.26); border-radius: 14px; background: linear-gradient(145deg, rgba(138, 124, 255, 0.11), rgba(84, 198, 229, 0.055)); }
+.lalor-delivery-choice-modal .lalor-delivery-meta { display: flex; align-items: center; gap: 8px; color: #75e3ae; font-size: 13px; }
+.lalor-delivery-choice-modal .lalor-delivery-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 10px !important; }
+.lalor-delivery-choice-modal .lalor-delivery-buttons .ant-space-item { min-width: 0; }
+.lalor-delivery-choice-modal .lalor-delivery-buttons .ant-btn { width: 100%; min-height: 46px; }
+
+.lalor-cash-payment-modal .lalor-payment-card { margin: 0; border: 0; background: transparent; box-shadow: none; }
+.lalor-cash-payment-modal .lalor-payment-card > .ant-card-head { display: none; }
+.lalor-cash-payment-modal .lalor-payment-card > .ant-card-body { padding: 0; }
+.lalor-cash-payment-modal .lalor-payment-status-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.lalor-cash-payment-modal .lalor-payment-instructions { display: grid; gap: 14px; color: #b8bbca; }
+.lalor-cash-payment-modal .lalor-payment-target { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; padding: 10px; border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 9px; background: rgba(0, 0, 0, 0.12); }
+.lalor-cash-payment-modal .lalor-payment-target-value { display: block; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.lalor-cash-payment-modal .lalor-payment-target-actions { display: flex; min-width: 0; flex-wrap: wrap; align-items: center; gap: 8px; }
+.lalor-cash-payment-modal .lalor-payment-target-actions .ant-space-item { min-width: 0; }
+.lalor-cash-payment-modal .lalor-payment-target-actions .ant-btn { min-height: 36px; }
+.lalor-cash-payment-modal .lalor-payment-instructions > .ant-btn { justify-self: center; min-width: 150px; }
+.lalor-order-detail-modal .ant-descriptions-bordered .ant-descriptions-view { overflow: hidden; border-color: rgba(255, 255, 255, 0.13); border-radius: 12px; }
+.lalor-order-detail-modal .ant-descriptions-bordered .ant-descriptions-item-label { width: 112px; background: rgba(138, 124, 255, 0.08); color: #b8bbca; }
+.lalor-order-detail-modal .ant-descriptions-bordered .ant-descriptions-item-content { background: rgba(255, 255, 255, 0.025); color: #f3f3fa; overflow-wrap: anywhere; }
+.lalor-delivery-choice-modal :where(.ant-btn, button):focus-visible,
+.lalor-cash-payment-modal :where(.ant-btn, button):focus-visible { outline: 2px solid #a99dff; outline-offset: 2px; }
+
+@media (max-width: 900px) {
+  .studio-ui .lalor-personal-grid { grid-template-columns: 1fr; }
+  .studio-ui .lalor-personal-page { padding: 20px 18px 28px; }
+}
+
+@media (max-width: 560px) {
+  .studio-ui .lalor-pairing-card .ant-card-body { padding: 24px 20px; }
+  .studio-ui .lalor-pairing-actions { align-items: stretch; flex-direction: column; }
+  .studio-ui .lalor-pairing-actions .ant-btn { width: 100%; }
+  .studio-ui .lalor-purchase-footer { align-items: stretch; flex-direction: column; }
+  .studio-ui .lalor-purchase-footer .ant-btn { width: 100%; }
+  .studio-ui .lalor-payment-target { align-items: stretch; flex-direction: column; }
+  .studio-ui .lalor-history-row { grid-template-columns: 34px minmax(0, 1fr); }
+  .studio-ui .lalor-history-meta { grid-column: 2; align-items: flex-start; flex-direction: row; justify-content: space-between; }
+  .lalor-delivery-choice-modal .lalor-delivery-buttons { grid-template-columns: minmax(0, 1fr); }
+  .lalor-cash-payment-modal .lalor-payment-target { align-items: stretch; flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-ui .lalor-product-card { transition: none; }
+  .studio-ui .lalor-product-card:hover { transform: none; }
+}
+
+
+

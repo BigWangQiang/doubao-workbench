@@ -1,0 +1,125 @@
+node_modules
+dist
+release
+/release-*/
+.DS_Store
+*.swp
+.git/*
+__pycache__/
+*.pyc
+.venv/*
+*.o
+*.a
+/vendor/*
+!/vendor/network-core/
+!/vendor/network-core/**
+*.egg-info/
+/.env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.tsbuildinfo
+.cozeproj/reduction
+
+# JS/TS bundlers & build outputs
+.next
+.nuxt
+.turbo
+.vercel
+.parcel-cache
+.cache
+coverage
+storybook-static
+
+# Package manager artifacts
+.pnp*
+.npm
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# Go tooling
+bin/
+*.test
+
+# Editor / IDE
+.vscode/
+.idea/
+*.iml
+
+# OS / misc
+Thumbs.db
+ehthumbs.db
+
+# Logs
+output.log
+*.log
+*.log.*
+logs/
+
+# 视频文件
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
+*.webm
+*.m4v
+*.mpeg
+*.mpg
+*.3gp
+*.f4v
+*.rmvb
+*.vob
+
+# 归档文件
+*.iso
+*.dmg
+*.rar
+*.zip
+!/integrations/zizi-workbench/Lalor-Zizi-Plugins-2.1.1.zip
+*.gz
+
+# 文档类也默认加入
+*.pdf
+*.docx
+*.doc
+*.xlsx
+*.xls
+*.ppt
+*.pptx
+*.xlsx
+*.csv
+!examples/*.csv
+
+# Preview files
+.preview
+
+# CodeGraph index
+.codegraphfix_dropdown.py
+
+data/
+DoubaoStudioData/
+
+# Local relay credentials (never commit secrets)
+deploy/hk-relay/.relay.env
+/deploy/hk-relay/
+/docs/handoffs/
+/docs/independent-canvas.md
+/docs/releases/online-updates.md
+/SOURCE_PACKAGE_*
+/canvas-web/public/user-agreement.html
+/canvas-web/src/assets/workbench-support.png
+/canvas-web/public/blender/
+/canvas-web/public/voice-samples/
+/extensions/dola30/
+/extensions/dola30-legacy/
+/extensions/dola-plugin-2.5/

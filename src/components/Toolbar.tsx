@@ -1,0 +1,539 @@
+/**
+ * src/components/Toolbar.tsx
+ * 顶部工具栏
+ *
+ * 包含：
+ * - 应用标题「豆包工作室」
+ * - 窗口控制按钮（最小化/最大化/关闭）
+ * - 全局操作：全部暂停/继续、批量下载产物
+ */
+
+import React from 'react';
+import {
+  MinusOutlined,
+  BorderOutlined,
+  CloseOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  DownloadOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  HistoryOutlined,
+  MoreOutlined,
+  AppstoreOutlined,
+  ApiOutlined,
+  LockOutlined,
+} from '@ant-design/icons';
+import { Descriptions, Dropdown, message, Modal, Progress, Tooltip } from 'antd';
+import type { MenuProps } from 'antd';
+import { useTaskStore } from '../store/useTaskStore';
+import { useProjectStore } from '../store/useProjectStore';
+import { SettingsModal } from './SettingsModal';
+import { openSoftwareUpdate } from './SoftwareUpdate';
+import { OutputPreviewModal } from './OutputPreviewModal';
+import type { OutputItem } from './OutputPreviewModal';
+import { DownloadQueueModal } from './DownloadQueueModal';
+import type { AdapterSelfCheckReport, DownloadJob } from '../types';
+import { useAccountStore } from '../store/useAccountStore';
+import { ArtifactCenterModal } from './ArtifactCenterModal';
+import { BatchManagerModal } from './BatchManagerModal';
+import { installAdapterBundle, rollbackAdapterBundle } from '../automation/doubaoAdapter';
+import { ProjectSwitcher } from './ProjectSwitcher';
+import { LogCenterModal } from './LogCenterModal';
+import { ProjectOverviewModal } from './ProjectOverviewModal';
+import { LocalManagerModal } from './LocalManagerModal';
+import type { WorkspacePane } from './WorkspaceRail';
+
+interface ToolbarProps {
+  sidebarCollapsed: boolean;
+  onToggleSidebar: () => void;
+  /** 导航型面板在主工作区打开，避免使用大弹窗覆盖内容。 */
+  onOpenWorkspacePane?: (pane: WorkspacePane) => void;
+}
+
+export const Toolbar: React.FC<ToolbarProps> = ({ sidebarCollapsed, onToggleSidebar, onOpenWorkspacePane }) => {
+  const { tasks, schedulerPaused, batchPause, resumeAll, getCompletedOutputs } = useTaskStore();
+  const accounts = useAccountStore((state) => state.accounts);
+  const activeProjectId = useProjectStore((state) => state.activeProjectId);
+  const selectProject = useProjectStore((state) => state.selectProject);
+  const [appVersion, setAppVersion] = React.useState('');
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [previewOpen, setPreviewOpen] = React.useState(false);
+  const [completedOutputs, setCompletedOutputs] = React.useState<OutputItem[]>([]);
+  const [downloadQueueOpen, setDownloadQueueOpen] = React.useState(false);
+  const [downloadJobs, setDownloadJobs] = React.useState<DownloadJob[]>([]);
+  const [downloadJobsLoading, setDownloadJobsLoading] = React.useState(false);
+  const [metricsOpen, setMetricsOpen] = React.useState(false);
+  const [artifactCenterOpen, setArtifactCenterOpen] = React.useState(false);
+  const [adapterReport, setAdapterReport] = React.useState<AdapterSelfCheckReport | null>(null);
+  const [adapterChecking, setAdapterChecking] = React.useState(false);
+  const [batchManagerOpen, setBatchManagerOpen] = React.useState(false);
+  const [logsOpen, setLogsOpen] = React.useState(false);
+  const [projectOverviewOpen, setProjectOverviewOpen] = React.useState(false);
+  const [localManagerOpen, setLocalManagerOpen] = React.useState(false);
+
+  React.useEffect((): (() => void) => {
+    let mounted = true;
+    void window.electronAPI.system.getVersion().then((version): void => {
+      if (mounted) setAppVersion(version);
+    }).catch((): void => undefined);
+    return (): void => { mounted = false; };
+  }, []);
+
+  React.useEffect(() => {
+    const handleResult = (event: Event) => {
+      const detail = (event as CustomEvent<{ report?: AdapterSelfCheckReport; error?: string }>).detail;
+      setAdapterChecking(false);
+      if (detail.error) message.error(`兼容性自检失败：${detail.error}`);
+      else if (detail.report) setAdapterReport(detail.report);
+    };
+    window.addEventListener('adapter-self-check-result', handleResult);
+    return () => window.removeEventListener('adapter-self-check-result', handleResult);
+  }, []);
+
+  React.useEffect(() => {
+    const handleWorkspacePanel = (event: Event) => {
+      const panel = (event as CustomEvent<{ panel?: string }>).detail?.panel;
+      if (panel !== 'local-manager' && panel !== 'artifacts' && panel !== 'logs' && panel !== 'settings') return;
+      if (onOpenWorkspacePane) {
+        onOpenWorkspacePane(panel);
+        return;
+      }
+      if (panel === 'local-manager') setLocalManagerOpen(true);
+      if (panel === 'artifacts') setArtifactCenterOpen(true);
+      if (panel === 'logs') setLogsOpen(true);
+      if (panel === 'settings') setSettingsOpen(true);
+    };
+    window.addEventListener('workspace-open-panel', handleWorkspacePanel);
+    return () => window.removeEventListener('workspace-open-panel', handleWorkspacePanel);
+  }, [onOpenWorkspacePane]);
+
+  const openWorkspacePane = (pane: WorkspacePane): void => {
+    if (onOpenWorkspacePane) {
+      onOpenWorkspacePane(pane);
+      return;
+    }
+    if (pane === 'local-manager') setLocalManagerOpen(true);
+    if (pane === 'artifacts') setArtifactCenterOpen(true);
+    if (pane === 'logs') setLogsOpen(true);
+    if (pane === 'settings') setSettingsOpen(true);
+  };
+
+  const loadDownloadJobs = React.useCallback(async () => {
+    setDownloadJobsLoading(true);
+    try {
+      setDownloadJobs(await window.electronAPI.tasks.listDownloads());
+    } finally {
+      setDownloadJobsLoading(false);
+    }
+  }, []);
+
+  // 监听 TaskConsole 发来的批量下载事件
+  React.useEffect(() => {
+    const handleBatchDownloadOutputs = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const outputs = customEvent.detail;
+      if (outputs && outputs.length > 0) {
+        setCompletedOutputs(outputs);
+        setPreviewOpen(true);
+      }
+    };
+    window.addEventListener('batch-download-outputs', handleBatchDownloadOutputs);
+    return () => window.removeEventListener('batch-download-outputs', handleBatchDownloadOutputs);
+  }, []);
+
+  // 运行中的任务数（包含 executing + generating）
+  const runningCount = tasks.filter(
+    (t) => t.status === 'executing' || t.status === 'generating'
+  ).length;
+  // 顶部与首页使用同一项目口径，同时提供其他项目排队任务的明确入口。
+  const projectTasks = tasks.filter((task) => (task.projectId || 'default-project') === activeProjectId);
+  const projectRunningCount = projectTasks.filter((task) => task.status === 'executing' || task.status === 'generating').length;
+  const queuedCount = projectTasks.filter((task) => task.status === 'queued').length;
+  const otherQueuedTasks = tasks.filter((task) => task.status === 'queued' && (task.projectId || 'default-project') !== activeProjectId);
+  // 已完成且有产物的任务数
+  const completedWithOutputs = tasks.filter(
+    (t) => t.status === 'done' && t.outputs.length > 0
+  ).length;
+  const terminalTasks = tasks.filter((task) => task.status === 'done' || task.status === 'fail');
+  const successRate = terminalTasks.length > 0
+    ? Math.round((tasks.filter((task) => task.status === 'done').length / terminalTasks.length) * 100)
+    : 0;
+  const completedDurations = tasks
+    .filter((task) => task.status === 'done' && task.runtime?.startedAt)
+    .map((task) => new Date(task.updatedAt).getTime() - new Date(task.runtime!.startedAt).getTime())
+    .filter((duration) => duration >= 0);
+  const averageMinutes = completedDurations.length
+    ? Math.round(completedDurations.reduce((sum, duration) => sum + duration, 0) / completedDurations.length / 60_000)
+    : 0;
+
+  // 处理暂停/继续
+  const handleTogglePause = async () => {
+    if (!schedulerPaused) {
+      const paused = await batchPause();
+      if (paused) message.info('任务调度已暂停');
+    } else {
+      const resumed = await resumeAll();
+      if (resumed) {
+        message.success('任务调度已恢复');
+      } else {
+        message.warning(useTaskStore.getState().error || '部分任务未能恢复，请查看任务详情');
+      }
+    }
+  };
+
+  // 批量下载产物 — 打开预览 Modal
+  const handleBatchDownload = async () => {
+    const outputs = await getCompletedOutputs();
+    if (outputs.length === 0) {
+      message.info('暂无已完成产物');
+      return;
+    }
+    setCompletedOutputs(outputs);
+    setPreviewOpen(true);
+  };
+
+  // 执行下载
+  const handleDoDownload = async (selectedOutputs: OutputItem[]) => {
+    // 获取下载目录设置
+    const settings = await window.electronAPI.settings.get();
+    const saveDir = settings.downloadDir || undefined;
+
+    const result = await window.electronAPI.tasks.downloadOutputs(selectedOutputs, saveDir);
+    await loadDownloadJobs();
+    if (result.success) {
+      if (result.failed > 0) {
+        message.warning(`已下载 ${result.count} 个，失败 ${result.failed} 个：${result.error || '地址不可用'}`);
+      } else {
+        message.success(`已下载 ${result.count} 个产物到 ${result.saveDir || '下载目录'}`);
+        setPreviewOpen(false);
+      }
+    } else {
+      message.error(`下载失败：${result.error || '未能获取文件'}`);
+    }
+  };
+
+  const handleRetryDownload = async (job: DownloadJob) => {
+    const result = await window.electronAPI.tasks.downloadOutputs([{
+      taskId: job.taskId,
+      prompt: '',
+      outputs: [job.url],
+      accountId: job.accountId,
+      mode: job.mode,
+    }], job.saveDir);
+    await loadDownloadJobs();
+    if (result.success) message.success('重新下载成功');
+    else message.error(`重新下载失败：${result.error || '地址不可用'}`);
+  };
+
+  // 更多操作菜单
+  const moreMenuItems: MenuProps['items'] = [
+    {
+      key: 'project-overview',
+      label: '项目概览',
+      onClick: () => setProjectOverviewOpen(true),
+    },
+    {
+      key: 'batches',
+      label: '任务批次',
+      onClick: () => setBatchManagerOpen(true),
+    },
+    {
+      key: 'logs',
+      label: '运行日志',
+      onClick: () => openWorkspacePane('logs'),
+    },
+    {
+      key: 'integrity',
+      label: '检查数据完整性',
+      onClick: async () => {
+        const result = await window.electronAPI.system.checkIntegrity();
+        if (result.success) message.success('数据完整性检查通过');
+        else message.error(result.issues.join('；'));
+      },
+    },
+    {
+      key: 'backup',
+      label: '导出完整备份',
+      onClick: async () => {
+        const result = await window.electronAPI.system.exportBackup();
+        if (result.success) message.success(`备份已导出：${result.filePath}`);
+        else if (result.error) message.error(result.error);
+      },
+    },
+    {
+      key: 'restore',
+      label: '恢复完整备份',
+      onClick: async () => {
+        const result = await window.electronAPI.system.restoreBackup();
+        if (result.success) message.success('备份已恢复，请重新启动应用');
+        else if (result.error) message.error(result.error);
+      },
+    },
+    {
+      key: 'updates',
+      label: '检查应用更新',
+      onClick: openSoftwareUpdate,
+    },
+    {
+      key: 'adapter-check',
+      label: adapterChecking ? '兼容性自检中...' : '豆包页面兼容性自检',
+      disabled: adapterChecking,
+      onClick: () => {
+        setAdapterChecking(true);
+        window.dispatchEvent(new CustomEvent('adapter-self-check'));
+      },
+    },
+    {
+      key: 'adapter-import',
+      label: '导入页面适配规则',
+      onClick: async () => {
+        const selected = await window.electronAPI.tasks.selectAdapterRules();
+        if (!selected.success || !selected.bundle) {
+          if (selected.error) message.error(selected.error);
+          return;
+        }
+        const result = await installAdapterBundle(selected.bundle);
+        if (result.ok) message.success(`适配规则 ${selected.bundle.version} 已安装`);
+        else message.error(result.error);
+      },
+    },
+    {
+      key: 'adapter-rollback',
+      label: '回退页面适配规则',
+      onClick: async () => {
+        const result = await rollbackAdapterBundle();
+        if (result.ok) message.success(`已回退到适配规则 ${result.version}`);
+        else message.warning(result.error);
+      },
+    },
+    {
+      key: 'metrics',
+      label: '运行统计',
+      onClick: () => setMetricsOpen(true),
+    },
+    {
+      key: 'diagnostics',
+      label: '导出诊断包',
+      onClick: async () => {
+        const result = await window.electronAPI.tasks.exportDiagnostics();
+        if (result.success) message.success(`诊断包已导出：${result.filePath}`);
+        else if (result.error) message.error(`导出失败：${result.error}`);
+      },
+    },
+    {
+      key: 'settings',
+      label: '偏好设置',
+      onClick: () => openWorkspacePane('settings'),
+    },
+    {
+      key: 'about',
+      label: '关于屿砚工作台',
+    },
+  ];
+
+  return (
+    <>
+    <div
+      className="toolbar app-titlebar flex items-center justify-between h-11 px-3 bg-db-bg-secondary border-b border-db-border"
+      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+    >
+      {/* 左侧：标题 + 面板切换 */}
+      <div className="toolbar-brand-group flex items-center gap-3" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+        {/* 侧边栏折叠按钮 */}
+        <Tooltip title={sidebarCollapsed ? '展开面板' : '折叠面板'}>
+          <button className="btn-ghost toolbar-sidebar-toggle" aria-label={sidebarCollapsed ? '展开面板' : '折叠面板'} onClick={onToggleSidebar}>
+            {sidebarCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </button>
+        </Tooltip>
+
+        {/* 应用标题 */}
+        <div className="app-brand flex items-center gap-2">
+          <span className="app-brand-title text-lg font-bold text-db-accent">
+            屿砚工作台
+          </span>
+          <span className="app-version text-2xs text-db-text-muted bg-db-surface px-1.5 py-0.5 rounded">
+            {appVersion ? `v${appVersion}` : '读取版本…'}
+          </span>
+          <span className="local-security-pill">
+            <LockOutlined aria-hidden="true" /> 本机安全存储
+          </span>
+        </div>
+        <ProjectSwitcher />
+
+        {/* 任务状态指示 */}
+        <div className="toolbar-runtime-status flex items-center gap-3 ml-4 text-xs text-db-text-secondary" aria-live="polite">
+          {projectRunningCount > 0 && (
+            <span className="flex items-center gap-1">
+              <span className="status-dot busy" />
+              执行中 {projectRunningCount}
+            </span>
+          )}
+          {queuedCount > 0 && (
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-blue-400" />
+              排队 {queuedCount}
+            </span>
+          )}
+          {otherQueuedTasks.length > 0 && (
+            <Tooltip title="其他项目有排队任务，点击切换项目查看">
+              <button className="btn-ghost text-xs" onClick={(): void => {
+                selectProject(otherQueuedTasks[0].projectId || 'default-project');
+                onOpenWorkspacePane?.('tasks');
+              }}>其他项目排队 {otherQueuedTasks.length}</button>
+            </Tooltip>
+          )}
+        </div>
+      </div>
+
+      {/* 中间：可拖拽区域 */}
+      <div className="flex-1" />
+
+      {/* 右侧：全局操作 + 窗口控制 */}
+      <div className="toolbar-actions flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+        {/* 暂停/继续 */}
+        <Tooltip title={schedulerPaused ? '继续所有任务' : '暂停所有任务'}>
+          <button className="btn-ghost" aria-label={schedulerPaused ? '继续所有任务' : '暂停所有任务'} onClick={handleTogglePause}>
+            {schedulerPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
+          </button>
+        </Tooltip>
+
+        {/* 没有工作区导航轨时保留旧入口；桌面主布局由左侧导航统一承载。 */}
+        {!onOpenWorkspacePane && (
+          <>
+            <Tooltip title="产物中心">
+              <button className="btn-ghost" aria-label="打开产物中心" onClick={() => openWorkspacePane('artifacts')}>
+                <AppstoreOutlined />
+              </button>
+            </Tooltip>
+
+            <Tooltip title="本地管理器">
+              <button className="btn-ghost" aria-label="打开本地管理器" onClick={() => openWorkspacePane('local-manager')}>
+                <ApiOutlined />
+              </button>
+            </Tooltip>
+
+            <Tooltip title={`下载已完成产物 (${completedWithOutputs})`}>
+              <button
+                className={`btn-ghost ${completedWithOutputs === 0 ? 'opacity-40 cursor-not-allowed' : ''}`}
+                onClick={handleBatchDownload}
+                disabled={completedWithOutputs === 0}
+                aria-label="下载已完成产物"
+              >
+                <DownloadOutlined />
+              </button>
+            </Tooltip>
+
+            <Tooltip title="下载记录">
+              <button
+                className="btn-ghost"
+                aria-label="打开下载记录"
+                onClick={() => {
+                  setDownloadQueueOpen(true);
+                  void loadDownloadJobs();
+                }}
+              >
+                <HistoryOutlined />
+              </button>
+            </Tooltip>
+          </>
+        )}
+
+        <Dropdown menu={{ items: moreMenuItems }} trigger={['click']}>
+          <button className="btn-ghost" title="更多" aria-label="更多功能">
+            <MoreOutlined />
+          </button>
+        </Dropdown>
+
+        {/* 分隔线 */}
+        <div className="w-px h-5 bg-db-border mx-1" />
+
+        {/* 窗口控制按钮 */}
+        <Tooltip title="最小化">
+          <button className="btn-ghost" aria-label="最小化" onClick={() => window.electronAPI?.system?.minimize()}>
+            <MinusOutlined style={{ fontSize: 12 }} />
+          </button>
+        </Tooltip>
+        <Tooltip title="最大化">
+          <button className="btn-ghost" aria-label="最大化" onClick={() => window.electronAPI?.system?.toggleMaximize()}>
+            <BorderOutlined style={{ fontSize: 11 }} />
+          </button>
+        </Tooltip>
+        <Tooltip title="关闭">
+          <button
+            className="btn-ghost hover:!bg-red-500/20 hover:!text-red-400"
+            aria-label="关闭"
+            onClick={() => window.electronAPI?.system?.close()}
+          >
+            <CloseOutlined style={{ fontSize: 12 }} />
+          </button>
+        </Tooltip>
+      </div>
+    </div>
+
+    {/* 设置 Modal */}
+    <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+
+    {/* 产物预览 Modal */}
+    <OutputPreviewModal
+      open={previewOpen}
+      outputs={completedOutputs}
+      onClose={() => setPreviewOpen(false)}
+      onDownload={handleDoDownload}
+    />
+    <DownloadQueueModal
+      open={downloadQueueOpen}
+      jobs={downloadJobs}
+      loading={downloadJobsLoading}
+      onClose={() => setDownloadQueueOpen(false)}
+      onRefresh={() => void loadDownloadJobs()}
+      onRetry={handleRetryDownload}
+    />
+    <ArtifactCenterModal open={artifactCenterOpen} onClose={() => setArtifactCenterOpen(false)} />
+    <LocalManagerModal open={localManagerOpen} onClose={() => setLocalManagerOpen(false)} />
+    <BatchManagerModal open={batchManagerOpen} onClose={() => setBatchManagerOpen(false)} />
+    <LogCenterModal open={logsOpen} onClose={() => setLogsOpen(false)} />
+    <ProjectOverviewModal open={projectOverviewOpen} onClose={() => setProjectOverviewOpen(false)} />
+    <Modal title="运行统计" open={metricsOpen} onCancel={() => setMetricsOpen(false)} footer={null} width={560}>
+      <Progress percent={successRate} status={successRate >= 80 ? 'success' : 'normal'} />
+      <Descriptions column={2} size="small" style={{ marginTop: 18 }}>
+        <Descriptions.Item label="任务总数">{tasks.length}</Descriptions.Item>
+        <Descriptions.Item label="成功率">{successRate}%</Descriptions.Item>
+        <Descriptions.Item label="平均完成时间">{averageMinutes} 分钟</Descriptions.Item>
+        <Descriptions.Item label="等待人工处理">
+          {tasks.filter((task) => task.status === 'waiting_verification' || task.status === 'waiting_generation_confirmation' || task.status === 'manual_submission_observing' || task.status === 'paused').length}
+        </Descriptions.Item>
+        <Descriptions.Item label="失败任务">{tasks.filter((task) => task.status === 'fail').length}</Descriptions.Item>
+        <Descriptions.Item label="下载失败">{downloadJobs.filter((job) => job.status === 'failed').length}</Descriptions.Item>
+        <Descriptions.Item label="可用账号">
+          {accounts.filter((account) => !account.seedanceQuota?.exhausted && !account.health?.verificationRequired && account.health?.loginState !== 'expired').length}
+        </Descriptions.Item>
+        <Descriptions.Item label="额度耗尽账号">{accounts.filter((account) => account.seedanceQuota?.exhausted).length}</Descriptions.Item>
+      </Descriptions>
+    </Modal>
+    <Modal
+      title={`豆包页面兼容性 · ${adapterReport?.score ?? 0} 分`}
+      open={!!adapterReport}
+      onCancel={() => setAdapterReport(null)}
+      footer={null}
+      width={680}
+    >
+      {adapterReport && (
+        <>
+          <Progress percent={adapterReport.score} status={adapterReport.score >= 80 ? 'success' : 'exception'} />
+          <Descriptions column={1} size="small" style={{ marginTop: 16 }}>
+            <Descriptions.Item label="适配器版本">{adapterReport.adapterVersion}</Descriptions.Item>
+            <Descriptions.Item label="页面地址">{adapterReport.pageUrl}</Descriptions.Item>
+            {adapterReport.items.map((item) => (
+              <Descriptions.Item key={item.key} label={item.label}>
+                <span style={{ color: item.ok ? '#34d399' : '#fb7185' }}>{item.ok ? '正常' : '异常'}</span>
+                <span style={{ marginLeft: 8, color: '#888' }}>{item.detail}</span>
+              </Descriptions.Item>
+            ))}
+          </Descriptions>
+        </>
+      )}
+    </Modal>
+    </>
+  );
+};

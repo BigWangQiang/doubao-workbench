@@ -1,0 +1,31 @@
+.team-page { flex: 1; width: 100%; min-width: 0; min-height: 0; overflow-y: auto; padding: var(--space-8); color: var(--foreground); max-width: 1440px; margin: 0 auto; }
+.team-page header, .team-heading, .team-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.team-page h1 { font-size: var(--fs-title); font-weight: 650; margin: var(--space-2) 0; }
+.team-page h2 { font-size: var(--fs-heading-lg); font-weight: 600; }
+.team-muted { color: var(--muted-foreground); font-size: var(--fs-caption); }
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+.team-card { padding: var(--space-5); border: 1px solid var(--border); border-radius: var(--r-2xl); background: var(--workspace-surface); box-shadow: var(--elevation-card); text-align: left; color: inherit; }
+button.team-card, a.team-card { cursor: pointer; transition: transform 240ms, box-shadow 240ms; }
+button.team-card:hover, a.team-card:hover { transform: translateY(-4px); box-shadow: var(--elevation-card-hover); }
+.team-card h2 { margin: var(--space-3) 0; }
+.team-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin: var(--space-6) 0; }
+.team-stat { padding: var(--space-4); background: var(--workspace-surface); border-radius: var(--r-lg); }
+.team-stat strong { display: block; font-size: var(--fs-title); font-weight: 600; margin-bottom: var(--space-1); }
+.team-form { display: grid; gap: var(--space-4); }
+.team-form label { display: grid; gap: var(--space-2); font-size: var(--fs-body); }
+.team-form .ant-input-number, .team-form .ant-select { width: 100%; }
+.team-table { overflow-x: auto; }
+.team-editbar { position: fixed; bottom: var(--space-24); right: var(--space-5); z-index: var(--z-popover); background: var(--workspace-surface-strong); border: 1px solid var(--border); border-radius: var(--r-xl); padding: var(--space-3); box-shadow: var(--elevation-overlay); display: flex; align-items: center; gap: var(--space-3); max-width: calc(100vw - var(--space-10)); }
+.team-viewer { min-height: 100vh; background: var(--workspace-page); padding: var(--space-6); color: var(--foreground); }
+.team-canvas-preview { position: relative; height: calc(100dvh - var(--space-24) * 2); min-height: calc(var(--space-24) * 3); margin-top: var(--space-4); border: 1px solid var(--border); border-radius: var(--r-xl); overflow: hidden; }
+.team-preview-lines { position: absolute; width: 1px; height: 1px; overflow: visible; pointer-events: none; }
+.team-preview-node { position: absolute; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-xl); background: var(--workspace-surface-strong); overflow: hidden; z-index: 1; }
+.team-preview-node.is-frame { background: transparent; z-index: 0; pointer-events: none; }
+.team-preview-node h2 { flex-shrink: 0; padding: var(--space-2) var(--space-3); font-size: var(--fs-body); }
+.team-preview-node img, .team-preview-node video { width: 100%; min-height: 0; flex: 1; object-fit: contain; }
+.team-preview-node audio { width: 100%; }
+.team-preview-node p { padding: var(--space-3); font-size: var(--fs-body); white-space: pre-wrap; overflow: auto; }
+.team-preview-tools { position: absolute; right: var(--space-4); bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-3); z-index: var(--z-popover); }
+.team-preview-empty { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; color: var(--muted-foreground); }
+@media (max-width: 760px) { .team-page { padding: var(--space-4); } .team-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { button.team-card, a.team-card { transition: none; } button.team-card:hover, a.team-card:hover { transform: none; } }

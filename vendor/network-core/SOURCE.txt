@@ -1,0 +1,9 @@
+Mihomo Meta is distributed as the bundled network core for airport subscription protocols.
+Source: https://github.com/MetaCubeX/mihomo
+Release: https://github.com/MetaCubeX/mihomo/releases/tag/v1.19.31
+Corresponding source and build files: https://github.com/MetaCubeX/mihomo/tree/v1.19.31
+Official Windows amd64 archive: https://github.com/MetaCubeX/mihomo/releases/download/v1.19.31/mihomo-windows-amd64-v1-v1.19.31.zip
+Official Windows amd64 archive SHA256: d89c9bd746e8aacff89b2edf674813e25e8bd2dc565f4e12dc3b4526dd2b3177
+Official macOS arm64 archive: https://github.com/MetaCubeX/mihomo/releases/download/v1.19.31/mihomo-darwin-arm64-v1.19.31.gz
+Official macOS arm64 archive SHA256: d131f44b3deb2a8356f7ac75048ad67a10d53243323951c4f3cda7b672922963
+

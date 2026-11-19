@@ -1,0 +1,120 @@
+.canvas-video-player [data-media-provider] {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+}
+
+.canvas-video-player [data-media-provider] video {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: contain;
+}
+
+.canvas-video-player-compact {
+    --media-brand: var(--video-brand);
+    --media-focus-ring: 0 0 0 2px rgb(255 255 255 / 0.92);
+    --media-slider-height: 36px;
+    --media-slider-thumb-size: 11px;
+    --media-slider-track-height: 3px;
+    --media-slider-focused-track-height: 4px;
+    --media-slider-track-bg: rgb(255 255 255 / 0.34);
+    --media-slider-track-progress-bg: rgb(255 255 255 / 0.56);
+    --media-slider-track-fill-bg: #fff;
+    --media-slider-thumb-bg: #fff;
+    --media-slider-thumb-border: 0;
+    --media-slider-focused-thumb-shadow: 0 0 0 4px rgb(255 255 255 / 0.24);
+}
+
+.canvas-video-player-compact .canvas-video-compact-controls {
+    justify-content: flex-end;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.68) 0, rgb(0 0 0 / 0.32) 56px, transparent 112px);
+}
+
+.canvas-video-player-compact .canvas-video-compact-controls-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    gap: 8px;
+    padding: 6px 12px;
+    pointer-events: auto;
+}
+
+.canvas-video-player-compact .canvas-video-compact-button {
+    display: inline-flex;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: #fff;
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition:
+        background-color 140ms ease,
+        opacity 140ms ease;
+}
+
+.canvas-video-player-compact .canvas-video-compact-button:hover {
+    background: rgb(255 255 255 / 0.14);
+}
+
+.canvas-video-player-compact .canvas-video-compact-button:active {
+    background: rgb(255 255 255 / 0.22);
+}
+
+.canvas-video-player-compact .canvas-video-compact-button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+
+.canvas-video-player-compact .canvas-video-compact-icon {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+.canvas-video-player-compact .canvas-video-compact-play-icon {
+    fill: currentColor;
+}
+
+.canvas-video-player-compact .canvas-video-compact-time {
+    flex: 0 0 auto;
+    min-width: 3.5ch;
+    color: #fff;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    text-align: center;
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.72);
+    white-space: nowrap;
+}
+
+.canvas-video-player-compact .canvas-video-compact-slider {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 28px;
+    margin-inline: 2px;
+}
+
+.canvas-video-player-compact .canvas-video-compact-slider .vds-slider-thumb {
+    opacity: 1;
+}
+
+@media (pointer: coarse) {
+    .canvas-video-player-compact .canvas-video-compact-controls-row {
+        min-height: 56px;
+        padding-block: 6px;
+    }
+
+    .canvas-video-player-compact .canvas-video-compact-button {
+        flex-basis: 44px;
+        width: 44px;
+        height: 44px;
+    }
+}

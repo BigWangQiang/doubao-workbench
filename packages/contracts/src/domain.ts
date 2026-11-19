@@ -1,0 +1,356 @@
+/**
+ * @doubao-studio/contracts — 共享领域模型接口
+ *
+ * 跨进程（主进程 / 渲染进程 / preload）共享的核心业务实体类型。
+ *
+ * 纯洁性约束（由 scripts/check-contracts-boundary.mjs 强制检查）：
+ * - 禁止导入 electron、react、react-dom、zustand、fs、path、os
+ * - 禁止引用 document、window、HTMLElement 等 DOM 全局类型
+ * - 仅允许 TypeScript 内置类型和同目录下其他 shared 文件
+ */
+
+import type {
+  GenerationMode,
+  AccountStatus,
+  AccountPlatform,
+  TaskStatus,
+  TaskStage,
+  VideoModel,
+  VideoDuration,
+  VideoAspectRatio,
+  DependencyPolicy,
+} from './enums';
+
+/** 账号级代理协议。代理只作用于对应账号的隔离 Session。 */
+export type AccountProxyProtocol = 'http' | 'https' | 'socks5';
+
+/** 账号代理公开配置；密码永远不通过账号列表返回。 */
+export interface AccountProxyConfig {
+  enabled: boolean;
+  protocol: AccountProxyProtocol;
+  host: string;
+  port: number;
+  /** 是否已在本机安全存储中配置认证信息。 */
+  credentialsConfigured?: boolean;
+}
+
+// ==================== 账号相关 ====================
+
+/** Seedance 每日额度的本地预测记录 */
+export interface SeedanceQuota {
+  date: string;
+  usedUnits: number;
+  estimatedTotalUnits: number;
+  /** 用户配置的单次视频生成消耗；旧数据缺失时继续按视频时长估算。 */
+  costPerVideoUnits?: number;
+  exhausted: boolean;
+  updatedAt: string;
+}
+
+/** 账号网页自动化可用性状态。 */
+export type AccountAvailabilityState =
+  | 'unknown'
+  | 'ready'
+  | 'action_required'
+  | 'login_required'
+  | 'unavailable';
+
+/** 可用性检测触发点。 */
+export type AccountAvailabilitySource =
+  | 'startup'
+  | 'navigation'
+  | 'pre_task'
+  | 'pre_submit'
+  | 'manual';
+
+/** 最近一次账号网页可用性检测结果。 */
+export interface AccountAvailability {
+  state: AccountAvailabilityState;
+  reason: string;
+  message: string;
+  checkedAt: string;
+  source: AccountAvailabilitySource;
+}
+
+/** 账号健康状态 */
+export interface AccountHealth {
+  loginState: 'unknown' | 'ok' | 'expired';
+  verificationRequired: boolean;
+  consecutiveFailures: number;
+  successCount: number;
+  failureCount: number;
+  lastSuccessAt?: string;
+  lastFailureAt?: string;
+  /**
+   * 错误码。保持 string 而非 TaskErrorCode，因为历史 JSON 和 IPC 传入的值
+   * 可能包含未知错误码，在 G-404 Repository 层具备运行时校验前不收紧。
+   */
+  lastErrorCode?: string;
+  cooldownUntil?: string;
+  /** 网页真实状态探测；与历史任务成功/失败计数分离。 */
+  availability?: AccountAvailability;
+}
+
+/** 账号调度配置 */
+export interface AccountScheduling {
+  enabled: boolean;
+  weight: number;
+  preferredModes: GenerationMode[];
+  manualCooldownUntil?: string;
+}
+
+/** 账号数据结构 */
+export interface Account {
+  id: string;
+  name: string;
+  /** 账号所属平台；旧数据缺失时按 doubao 归一化。 */
+  platform?: AccountPlatform;
+  /** 头像 URL（豆包默认头像） */
+  avatar: string;
+  /** Session 分区名（每个账号独立） */
+  partition: string;
+  /** 旧版兼容字段；新版本代理统一由 Dola 全局配置管理，豆包不使用。 */
+  proxy?: AccountProxyConfig;
+  status: AccountStatus;
+  /** 是否手动置顶 */
+  pinned: boolean;
+  /** Seedance 每日额度的本地预测记录 */
+  seedanceQuota?: SeedanceQuota;
+  health?: AccountHealth;
+  scheduling?: AccountScheduling;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ==================== 任务相关 ====================
+
+/** 结构化失败原因，供恢复、筛选和统计使用 */
+export interface TaskErrorInfo {
+  /**
+   * 错误码。保持 string 而非 TaskErrorCode，因为历史 JSON 和 IPC 传入的值
+   * 可能包含未知错误码，在 G-404 Repository 层具备运行时校验前不收紧。
+   * TaskErrorCode 联合可用于错误分类器和新受控 DTO。
+   */
+  code: string;
+  message: string;
+  recoverable: boolean;
+  detectedAt: string;
+}
+
+/** 当前或最近一次执行的可恢复快照 */
+export interface TaskRunSnapshot {
+  runId: string;
+  attempt: number;
+  stage: TaskStage;
+  message: string;
+  startedAt: string;
+  stageStartedAt: string;
+  lastHeartbeatAt: string;
+  submittedAt?: string;
+  /** 已准备点击发送，但平台尚未确认接收；仅供同账号恢复门禁使用。 */
+  submissionIntentAt?: string;
+  /** 平台回读确认已接收的时间；新数据与 submittedAt 同时写入。 */
+  submissionConfirmedAt?: string;
+  /** 人机验证后自动重发次数；自动恢复最多一次。 */
+  humanVerificationRetryCount?: number;
+  conversationUrl?: string;
+  controlReadiness?: {
+    modeEntryElapsedMs?: number;
+    attempts: number;
+    elapsedMs: number;
+    modelVisibleAtMs?: number;
+    compositeVisibleAtMs?: number;
+    stableAtMs?: number;
+    failureStage?: 'mode_entry' | 'model_control' | 'composite_control' | 'stable_readback' | 'final_readback';
+  };
+  generationConfirmation?: {
+    detectedAt: string;
+    marker: 'parameter_confirmation' | 'confirm_before_generation';
+    model?: string;
+    duration?: string;
+    aspectRatio?: string;
+  };
+  /** 仅保存计数、耗时与机器码，不保存页面文字、提示词或素材路径。 */
+  executionDiagnostics?: {
+    initializationQueueWaitMs?: number;
+    initializationLimit?: number;
+    upload?: {
+      attempts: number;
+      elapsedMs: number;
+      expectedCount: number;
+      observedCount: number;
+      pending: boolean;
+      stableSamples: number;
+      failure?: 'pending' | 'count_incomplete' | 'count_mismatch' | 'unstable';
+    };
+    materialAuthorization?: {
+      fingerprint: 'doubao-material-authorization-v1';
+      detectedAt: string;
+      clickedAt?: string;
+      verifiedAt?: string;
+      outcome: 'detected' | 'confirmed' | 'uncertain';
+    };
+  };
+  manualObservation?: {
+    startedAt: string;
+    expiresAt: string;
+    lastCheckedAt?: string;
+    source: 'stored_conversation' | 'user_confirmed_url';
+    outcome: 'observing' | 'completed' | 'manual_review';
+  };
+  input: {
+    prompt: string;
+    mode: GenerationMode;
+    videoConfig?: Task['videoConfig'];
+    attachments: string[];
+    referenceVideos?: string[];
+    audioAttachment?: string;
+    audioAttachments?: string[];
+  };
+}
+
+/** 单次任务运行的历史记录 */
+export interface TaskRunRecord {
+  runId: string;
+  attempt: number;
+  startedAt: string;
+  finishedAt?: string;
+  finalStage?: TaskStage;
+  outcome?: 'done' | 'failed' | 'paused' | 'cancelled';
+  /**
+   * 错误码。保持 string 而非 TaskErrorCode，原因同 TaskErrorInfo.code。
+   */
+  errorCode?: string;
+  durationMs?: number;
+}
+
+/** 任务执行锁（租约） */
+export interface TaskLock {
+  ownerId: string;
+  acquiredAt: string;
+  expiresAt: string;
+}
+
+/** 任务产物记录 */
+export interface TaskArtifact {
+  id: string;
+  url: string;
+  kind: 'image' | 'video' | 'file';
+  source: 'network' | 'page' | 'manual';
+  runId?: string;
+  conversationUrl?: string;
+  discoveredAt: string;
+  validation?: {
+    state: 'unknown' | 'valid' | 'expired' | 'invalid';
+    checkedAt: string;
+    contentType?: string;
+    contentLength?: number;
+    statusCode?: number;
+    error?: string;
+  };
+}
+
+/** 下载任务 */
+export interface DownloadJob {
+  id: string;
+  taskId: string;
+  accountId: string | null;
+  mode: GenerationMode;
+  url: string;
+  status: 'queued' | 'downloading' | 'done' | 'failed';
+  attempts: number;
+  saveDir: string;
+  filePath?: string;
+  bytes?: number;
+  /** 最后一次成功响应的媒体类型/真实分类；旧记录可缺省。 */
+  kind?: TaskArtifact['kind'];
+  contentType?: string;
+  statusCode?: number;
+  error?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** 任务数据结构 */
+export interface Task {
+  id: string;
+  /** 豆包画布批次由独立执行器调度，普通对话队列不得重新发送。 */
+  canvasBatch?: { batchId: string; rowId: string; number: string };
+  /** 提示词文本 */
+  prompt: string;
+  /** 任务要在哪个平台执行；旧数据缺失时按 doubao 归一化。 */
+  targetPlatform?: AccountPlatform;
+  /** 分配的目标账号 ID */
+  assignedAccountId: string | null;
+  /** 任务状态 */
+  status: TaskStatus;
+  /** 生成模式 */
+  mode: GenerationMode;
+  /** 视频生成配置 */
+  videoConfig?: {
+    model: VideoModel;
+    duration: VideoDuration;
+    aspectRatio: VideoAspectRatio;
+  };
+  /** 参考图片路径列表（图生视频/图生图用） */
+  attachments?: string[];
+  /** 参考视频路径列表（图生视频/视频编辑用） */
+  referenceVideos?: string[];
+  /** 参考音频文件路径（视频生成配音用） */
+  audioAttachment?: string;
+  /** 参考音频路径列表；audioAttachment 保留用于旧任务兼容 */
+  audioAttachments?: string[];
+  /** 执行结果/产出描述 */
+  result: string | null;
+  /** 产物的下载链接列表 */
+  outputs: string[];
+  /** 跨多次运行保留的产物记录；outputs 仅表示最近一次运行 */
+  artifacts?: TaskArtifact[];
+  /** 当前或最近一次执行的可恢复快照 */
+  runtime?: TaskRunSnapshot;
+  /** 结构化失败原因，供恢复、筛选和统计使用 */
+  errorInfo?: TaskErrorInfo;
+  runHistory?: TaskRunRecord[];
+  lock?: TaskLock;
+  batchId?: string;
+  source?: 'manual' | 'csv' | 'workflow' | 'lalor';
+  dependsOnTaskIds?: string[];
+  dependencyPolicy?: DependencyPolicy;
+  projectId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ==================== 项目相关 ====================
+
+/** 项目数据结构 */
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  archived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ==================== 日志相关 ====================
+
+/** 系统日志条目 */
+export interface LogEntry {
+  id: string;
+  level: 'info' | 'warn' | 'error';
+  scope: string;
+  message: string;
+  taskId?: string;
+  accountId?: string;
+  /** 任务执行时的账号名称快照；旧日志可缺省并由 UI 回查。 */
+  accountName?: string;
+  /** 任务执行时的账号平台快照。 */
+  accountPlatform?: AccountPlatform;
+  /** 任务执行时的生成类型快照。 */
+  mode?: GenerationMode;
+  /** 任务执行时的完整提示词快照，不做截断。 */
+  prompt?: string;
+  createdAt: string;
+}

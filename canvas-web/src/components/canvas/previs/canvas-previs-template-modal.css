@@ -1,0 +1,114 @@
+.canvas-previs-template-modal .ant-modal-container {
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    background: var(--card-surface);
+    color: var(--card-foreground);
+    box-shadow: var(--modal-shadow);
+}
+
+.canvas-previs-template-modal .ant-modal-header {
+    margin: 0;
+    padding: 20px 22px 0;
+    background: transparent;
+}
+
+.canvas-previs-template-modal .ant-modal-title {
+    color: var(--card-foreground);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.canvas-previs-template-modal .ant-modal-body {
+    padding: 16px 22px 22px;
+}
+
+.previs-template-grid {
+    display: grid;
+    gap: 8px;
+}
+
+.previs-template-card {
+    display: grid;
+    grid-template-areas:
+        "name summary"
+        "description description";
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 12px;
+    min-height: 64px;
+    padding: 12px 14px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    background: var(--card-surface-raised);
+    color: var(--card-foreground);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.previs-template-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--card-border-hover);
+    background: var(--card-surface-hover);
+}
+
+.previs-template-card:focus-visible {
+    outline: 2px solid var(--workspace-accent);
+    outline-offset: 2px;
+}
+
+.previs-template-card-name {
+    grid-area: name;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.35;
+}
+
+.previs-template-card-summary {
+    grid-area: summary;
+    max-width: 100%;
+    padding: 3px 8px;
+    border: 1px solid color-mix(in srgb, var(--workspace-accent) 22%, var(--card-border));
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--workspace-accent) 9%, var(--card-surface));
+    color: var(--workspace-accent);
+    font-size: 11px;
+    line-height: 1.35;
+    white-space: nowrap;
+}
+
+.previs-template-card-description {
+    grid-area: description;
+    color: var(--muted-foreground);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+    .canvas-previs-template-modal .ant-modal-header {
+        padding: 16px 16px 0;
+    }
+
+    .canvas-previs-template-modal .ant-modal-body {
+        padding: 12px 16px 16px;
+    }
+
+    .previs-template-card {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 5px;
+    }
+
+    .previs-template-card-summary {
+        justify-self: start;
+        white-space: normal;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .previs-template-card {
+        transition: none;
+    }
+}
