@@ -13,7 +13,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/license-MIT-34d399)](LICENSE)
 
-[快速开始](#快速开始) · [第一次使用](#第一次使用从登录到下载) · [CSV 批量导入](#csv-批量导入) · [常见问题](#常见问题) · [开发与验证](#开发与验证)
+[快速开始](#快速开始) · [第一次使用](#第一次使用从登录到下载) · [CSV 批量导入](#csv-批量导入) · [常见问题](#常见问题) · [开发与验证](#开发与验证) · [赞助商](#赞助商) · [贡献者与团队](#贡献者与团队)
 
 </div>
 
@@ -423,6 +423,23 @@ docs/                       架构设计和 README 图文资产
 - 完成源码版本、人工验收、安装包和 GitHub Release 的独立收口。
 
 完整阶段状态见 [ROADMAP.md](ROADMAP.md)，版本变化见 [CHANGELOG.md](CHANGELOG.md)。
+
+## 赞助商
+
+感谢以下赞助商对屿砚工作台的支持。
+
+| LOGO | 类型 | 赞助商名称 | 说明 | 网站 |
+| :---: | --- | --- | --- | --- |
+| <img src="docs/assets/sponsors/lalor.png" width="120" alt="Lalor Logo"> | 创作平台 | Lalor | 面向 AI 影视与短剧创作者，支持从故事和剧本出发制作分镜、生成图片与视频，并在同一个工作区完成出片。 | [lalor.tv](https://lalor.tv/) |
+| <img src="docs/assets/sponsors/yuyan-ai.png" width="120" alt="屿砚 AI Logo"> | 创作平台 | 屿砚 AI | 为屿砚工作台提供账号配对、会员验证及画布中的图片和视频生成服务。 | [yuyan-ai.site](https://yuyan-ai.site/) |
+
+## 贡献者与团队
+
+感谢团队成员对项目的贡献。
+
+| <img src="docs/assets/contributors/lunlun.jpg" width="96" alt="伦伦的头像"><br>伦伦 | <img src="docs/assets/contributors/fushuinanshou.jpg" width="96" alt="覆水难收的头像"><br>覆水难收 |
+| :---: | :---: |
+| [6166456@qq.com](mailto:6166456@qq.com)<br><em>只能说我输了，也许是你怕了。</em> | [1045300775@qq.com](mailto:1045300775@qq.com)<br><em>你的背包，让我走的好缓慢。</em> |
 
 ## License
 
