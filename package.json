@@ -1,17 +1,17 @@
 {
   "name": "doubao-studio-desktop",
   "version": "3.0.3",
-  "description": "屿砚工作台 - AI 内容创作者多账号管理与自动化生产工作台",
+  "description": "ai视频创作工作台 - AI 内容创作者多账号管理与自动化生产工作台",
   "main": "dist/main/main.js",
   "author": "Doubao Studio Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BigWangQiang/yuyan-workbench.git"
+    "url": "git+https://github.com/BigWangQiang/doubao-workbench.git"
   },
-  "homepage": "https://github.com/BigWangQiang/yuyan-workbench#readme",
+  "homepage": "https://github.com/BigWangQiang/doubao-workbench#readme",
   "bugs": {
-    "url": "https://github.com/BigWangQiang/yuyan-workbench/issues"
+    "url": "https://github.com/BigWangQiang/doubao-workbench/issues"
   },
   "keywords": [
     "doubao",
@@ -91,7 +91,7 @@
   },
   "build": {
     "appId": "com.doubao.studio.desktop",
-    "productName": "屿砚工作台",
+    "productName": "ai视频创作工作台",
     "artifactName": "Yuyan-Workbench-Setup-${version}-${arch}.${ext}",
     "publish": [
       {
@@ -165,7 +165,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "屿砚工作台",
+      "shortcutName": "ai视频创作工作台",
       "installerIcon": "build/yuyan-workbench.ico",
       "uninstallerIcon": "build/yuyan-workbench.ico",
       "deleteAppDataOnUninstall": false,

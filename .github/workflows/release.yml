@@ -34,7 +34,7 @@ jobs:
           $tag = "${{ github.ref_name }}"
           gh release view $tag *> $null
           if ($LASTEXITCODE -ne 0) {
-            gh release create $tag --title "豆包工作室 $tag" --generate-notes
+            gh release create $tag --title "ai视频创作工作台 $tag" --generate-notes
           }
           Get-ChildItem release -File | Where-Object {
             $_.Extension -in '.exe', '.blockmap' -or $_.Name -eq 'latest.yml'

@@ -7,13 +7,13 @@
 默认不监听任何端口。仅在明确传入参数时开启：
 
 ```powershell
-& '豆包工作室.exe' --local-control
+& 'ai视频创作工作台.exe' --local-control
 ```
 
 系统默认选择一个空闲端口。需要固定端口时：
 
 ```powershell
-& '豆包工作室.exe' --local-control --local-control-port=17891
+& 'ai视频创作工作台.exe' --local-control --local-control-port=17891
 ```
 
 服务只绑定 `127.0.0.1`。端口冲突、非法端口或启动失败会 fail-closed，不会改为监听其他网卡。
@@ -67,13 +67,13 @@
 Webview 的加载、隔离分区和合成问题，2.3.4 另提供一个**默认关闭**的开发者验收入口：
 
 ```powershell
-& '豆包工作室.exe' --local-cdp
+& 'ai视频创作工作台.exe' --local-cdp
 ```
 
 默认端口是 `9333`；也可显式指定本机端口：
 
 ```powershell
-& '豆包工作室.exe' --local-cdp --local-cdp-port=9334
+& 'ai视频创作工作台.exe' --local-cdp --local-cdp-port=9334
 ```
 
 该入口固定监听 `127.0.0.1`，不接受监听地址参数，不能暴露到局域网或公网。裸

@@ -26,7 +26,7 @@ export const PairingGatePage: React.FC<PairingGatePageProps> = ({ initialError, 
       <Card className="lalor-pairing-card" bordered={false}>
         <div className="lalor-pairing-brand" aria-hidden="true">
           <span className="lalor-pairing-brand-mark">屿</span>
-          <span>屿砚工作台</span>
+          <span>ai视频创作工作台</span>
         </div>
         <div className="lalor-pairing-icon" aria-hidden="true"><LockOutlined /></div>
         <Typography.Title level={1}>连接屿砚账号</Typography.Title>

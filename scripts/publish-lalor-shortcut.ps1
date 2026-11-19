@@ -36,7 +36,7 @@ $shortcut.TargetPath = $target
 $shortcut.WorkingDirectory = Split-Path -Parent $target
 $shortcut.Arguments = if ($UserDataDir) { '--user-data-dir="' + [IO.Path]::GetFullPath($UserDataDir) + '"' } else { $previousArguments }
 $shortcut.IconLocation = "$target,0"
-$shortcut.Description = '屿砚工作台（门禁校验通过）'
+$shortcut.Description = 'ai视频创作工作台（门禁校验通过）'
 $shortcut.Save()
 
 $verify = $shell.CreateShortcut($shortcutFullPath)

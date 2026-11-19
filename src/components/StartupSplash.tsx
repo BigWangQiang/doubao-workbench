@@ -25,7 +25,7 @@ export const StartupSplash: React.FC<StartupSplashProps> = ({ visible, phase }) 
           <span className="startup-logo-orbit" aria-hidden="true" />
           <img className="startup-logo" src={logoSrc} alt="" />
         </div>
-        <div className="startup-wordmark">屿砚工作台</div>
+        <div className="startup-wordmark">ai视频创作工作台</div>
         <div className="startup-phase">{phase}</div>
         <div className="startup-progress" aria-hidden="true">
           <span />

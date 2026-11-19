@@ -13,7 +13,7 @@ export const EmbeddedResourcePage: React.FC<EmbeddedResourcePageProps> = ({ onCl
       <Button onClick={onClose}>返回工作台</Button>
     </header>
     <Button
-      href="https://github.com/BigWangQiang/yuyan-workbench#快速开始"
+      href="https://github.com/BigWangQiang/doubao-workbench#快速开始"
       target="_blank"
       rel="noreferrer"
       icon={<ExportOutlined />}

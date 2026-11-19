@@ -237,7 +237,7 @@ function createMainWindow(): BrowserWindow {
     resizable: false,
     minimizable: true,
     maximizable: true,
-    title: '屿砚工作台',
+    title: 'ai视频创作工作台',
     backgroundColor: '#0f0f14',
     show: false, // 等待 ready-to-show 后再显示，避免白屏闪烁
     frame: false, // 无边框窗口（自定义标题栏）

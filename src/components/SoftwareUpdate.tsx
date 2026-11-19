@@ -62,7 +62,7 @@ export const SoftwareUpdatePanel: React.FC = () => {
           {state?.phase === 'ready'
             ? <Button type="primary" icon={<ReloadOutlined aria-hidden="true" />} onClick={install}>重启并安装</Button>
             : <Button icon={<CloudDownloadOutlined aria-hidden="true" />} loading={!!busy} disabled={!state || state.phase === 'unsupported'} onClick={(): void => { void check(); }}>{state?.phase === 'error' ? '重试更新' : '检查更新'}</Button>}
-          <Button href="https://yuyan-ai.site/connections/desktop" target="_blank" rel="noreferrer">打开屿砚工作台页面</Button>
+          <Button href="https://yuyan-ai.site/connections/desktop" target="_blank" rel="noreferrer">打开屿砚网站</Button>
         </Space>
       </Space>
     </section>
@@ -80,7 +80,7 @@ export const SoftwareUpdateNotifications: React.FC = () => {
     const handle = (state: SoftwareUpdateState): void => {
       if (state.phase !== 'ready' || !state.latestVersion || notifiedVersion.current === state.latestVersion) return;
       notifiedVersion.current = state.latestVersion;
-      notification.info({ key: 'software-update-ready', message: `屿砚工作台 v${state.latestVersion} 已下载`,
+      notification.info({ key: 'software-update-ready', message: `ai视频创作工作台 v${state.latestVersion} 已下载`,
         description: state.releaseNotes || '任务结束后可重启安装更新。', duration: 0,
         btn: <Button type="primary" onClick={(): void => { notification.destroy('software-update-ready'); show(); }}>查看更新</Button> });
     };
@@ -88,5 +88,5 @@ export const SoftwareUpdateNotifications: React.FC = () => {
     void window.electronAPI.system.updateStatus().then(handle).catch((): void => undefined);
     return (): void => { window.removeEventListener('software-update-open', show); unsubscribe(); };
   }, [notification]);
-  return <Modal title="屿砚工作台 · 在线更新" open={open} onCancel={(): void => setOpen(false)} footer={null} width={480} destroyOnClose><SoftwareUpdatePanel /></Modal>;
+  return <Modal title="ai视频创作工作台 · 在线更新" open={open} onCancel={(): void => setOpen(false)} footer={null} width={480} destroyOnClose><SoftwareUpdatePanel /></Modal>;
 };

@@ -1,30 +1,30 @@
 <div align="center">
 
-# 屿砚工作台
+# ai视频创作工作台
 
-**面向 AI 内容生产团队的 Windows 多账号任务工作台**
+**doubao-workbench · 面向 AI 内容生产团队的多账号工作台，内置无限画布**
 
 把提示词、素材、账号、队列、网页生成、产物绑定与下载，连接成一条可追踪、可暂停、可恢复的生产链。
 
 [![Source Version](https://img.shields.io/badge/source-3.0.3-6d5dfc)](package.json)
-[![CI](https://github.com/BigWangQiang/yuyan-workbench/actions/workflows/ci.yml/badge.svg)](https://github.com/BigWangQiang/yuyan-workbench/actions/workflows/ci.yml)
+[![CI](https://github.com/BigWangQiang/doubao-workbench/actions/workflows/ci.yml/badge.svg)](https://github.com/BigWangQiang/doubao-workbench/actions/workflows/ci.yml)
 [![Electron](https://img.shields.io/badge/Electron-33-47848f?logo=electron)](https://www.electronjs.org/)
 [![React](https://img.shields.io/badge/React-18-149eca?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/license-MIT-34d399)](LICENSE)
 
-[快速开始](#快速开始) · [第一次使用](#第一次使用从登录到下载) · [CSV 批量导入](#csv-批量导入) · [常见问题](#常见问题) · [开发与验证](#开发与验证) · [赞助商](#赞助商) · [贡献者与团队](#贡献者与团队)
+[快速开始](#快速开始) · [第一次使用](#第一次使用从登录到下载) · [CSV 批量导入](#csv-批量导入) · [常见问题](#常见问题) · [开发与验证](#开发与验证) · [界面截图](#界面截图) · [赞助商](#赞助商) · [贡献者与团队](#贡献者与团队)
 
 </div>
 
 ## 赞助商
 
-感谢以下赞助商对屿砚工作台的支持。
+感谢以下赞助商对ai视频创作工作台的支持。
 
 | LOGO | 类型 | 赞助商名称 | 说明 | 网站 |
 | :---: | --- | --- | --- | --- |
 | <img src="docs/assets/sponsors/lalor.png" width="120" alt="Lalor Logo"> | 创作平台 | Lalor | 面向 AI 影视与短剧创作者，支持从故事和剧本出发制作分镜、生成图片与视频，并在同一个工作区完成出片。 | [lalor.tv](https://lalor.tv/) |
-| <img src="docs/assets/sponsors/yuyan-ai.png" width="120" alt="屿砚 AI Logo"> | 创作平台 | 屿砚 AI | 为屿砚工作台提供账号配对、会员验证及画布中的图片和视频生成服务。 | [yuyan-ai.site](https://yuyan-ai.site/) |
+| <img src="docs/assets/sponsors/yuyan-ai.png" width="120" alt="屿砚 AI Logo"> | 创作平台 | 屿砚 AI | 面向个人创作者、漫剧工作室、企业，提供稳定Seedance等视频模型 API，做漫剧创作者高性价比的视频供应商。 | [yuyan-ai.site](https://yuyan-ai.site/) |
 
 ## 贡献者与团队
 
@@ -32,11 +32,9 @@
 
 | <img src="docs/assets/contributors/lunlun.jpg" width="96" alt="伦伦的头像"><br>伦伦 | <img src="docs/assets/contributors/fushuinanshou.jpg" width="96" alt="覆水难收的头像"><br>覆水难收 |
 | :---: | :---: |
-| [6166456@qq.com](mailto:6166456@qq.com)<br><em>只能说我输了，也许是你怕了。</em> | [1045300775@qq.com](mailto:1045300775@qq.com)<br><em>你的背包，让我走的好缓慢。</em> |
+| [6166456@qq.com](mailto:6166456@qq.com)<br><em>一定要有所思，才能有所悟吗？</em> | [1045300775@qq.com](mailto:1045300775@qq.com)<br><em>你的背包，让我走的好缓慢。</em> |
 
-![豆包工作室多账号内容生产工作台](docs/assets/README-hero.svg)
-
-豆包工作室不会替代豆包网页。它保留平台原生界面和人工处理能力，同时为重复生产增加项目隔离、多账号 Session、任务队列、运行状态、提交门禁、产物管理和恢复机制。适合短视频团队、批量素材生产、多个内容主题或客户项目并行管理。
+ai视频创作工作台不会替代豆包网页。它保留平台原生界面和人工处理能力，同时为重复生产增加项目隔离、多账号 Session、任务队列、运行状态、提交门禁、产物管理和恢复机制。适合短视频团队、批量素材生产、多个内容主题或客户项目并行管理。
 
 | 渠道 | 当前状态 |
 | --- | --- |
@@ -49,9 +47,7 @@
 
 ## 一眼看懂
 
-![豆包工作室完整生产流程](docs/assets/README-workflow.svg)
-
-| 生产问题 | 豆包工作室的处理方式 |
+| 生产问题 | ai视频创作工作台的处理方式 |
 | --- | --- |
 | 多个账号容易串登录状态 | 每个账号使用独立 Electron Session 和独立网页工作区 |
 | 批量任务难以追踪 | 项目、批次、任务、运行记录和产物使用稳定 ID 关联 |
@@ -208,8 +204,6 @@ flowchart LR
 
 ### CSV 批量导入
 
-![CSV 构建准则：从表头到导入前检查](docs/assets/README-csv-guide.svg)
-
 - 从 CSV 批量导入提示词、目标平台、模式、视频模型、时长、比例、素材和账号。
 - 可点击 CSV 按钮选择文件，也可把单个 `.csv` 文件直接拖到任务调度区；导入结果会明确显示成功、跳过和未指派数量。
 - 使用 `depends_on` 指定前置 CSV 行号，多个行号使用 `|` 分隔。
@@ -235,7 +229,7 @@ CSV 模板见 [`examples/tasks-template.csv`](examples/tasks-template.csv)。
 | `dependency_policy` | `all_done` 或 `all_finished` | `all_done` |
 
 > [!CAUTION]
-> `import-csv` CLI 会写入项目和任务数据。必须先退出豆包工作室，再显式提供真实 `tasks.json` 与同目录 `projects.json`；不要让桌面程序与 CLI 同时写同一数据文件，也不要猜测历史工作树中的数据路径。`--project-id` 必须是真实 ID；如需新项目，使用 `--project-name` 创建，不要把项目名称填入 `--project-id`。
+> `import-csv` CLI 会写入项目和任务数据。必须先退出ai视频创作工作台，再显式提供真实 `tasks.json` 与同目录 `projects.json`；不要让桌面程序与 CLI 同时写同一数据文件，也不要猜测历史工作树中的数据路径。`--project-id` 必须是真实 ID；如需新项目，使用 `--project-name` 创建，不要把项目名称填入 `--project-id`。
 
 ### 页面适配系统
 
@@ -280,18 +274,57 @@ CSV 模板见 [`examples/tasks-template.csv`](examples/tasks-template.csv)。
 
 ### 正式运行实例的本机控制面
 
-- 默认关闭；使用 `豆包工作室.exe --local-control` 显式开启，或附加 `--local-control-port=<端口>` 固定端口。
+- 默认关闭；使用 `ai视频创作工作台.exe --local-control` 显式开启，或附加 `--local-control-port=<端口>` 固定端口。
 - 只监听 `127.0.0.1`，每次启动生成短期 Bearer 令牌；发现信息与令牌分文件存放，退出即删除，令牌不进入日志。
 - Agent 通过项目 ID、批次 ID、任务 ID 调用 `start / pause / cancel / retry`，主进程和 Renderer 双重校验归属后复用正式调度链。
 - 响应不包含完整提示词、素材绝对路径、产物/会话 URL、Cookie、Token 或账号 Session，也不提供 DOM/CDP 和任意脚本执行。
 - 端点、发现文件和调用示例见 [`docs/LOCAL_CONTROL.md`](docs/LOCAL_CONTROL.md)。现有离线 CLI/MCP 后续可迁移为该控制面的客户端。
 
-## 界面结构
+## 界面截图
 
-- **顶部工具栏**：全部暂停/继续、批量下载、下载记录、运行统计、诊断导出和设置。
-- **账号列表**：账号切换、健康状态、Seedance 额度预测和运行详情。
-- **任务调度区**：添加、编辑、指派、启动、暂停、重跑、产物提取和批量下载。
-- **网页工作区**：显示每个账号独立的豆包网页，可在自动化外继续手动操作。
+以下截图来自 v3.0.2，顶部标题显示的是当时的应用名称。
+
+### 工作台总览
+
+查看当前项目的在线账号、任务队列、产物与账号健康度，也可以直接新建任务或打开常用工作区。
+
+![工作台总览](docs/assets/screenshots/dashboard.png)
+
+### 独立画布
+
+在无限画布中组织素材和生成节点。画布提供图片、视频、音频、剧本生成和智能剪辑入口。
+
+![独立画布](docs/assets/screenshots/canvas.png)
+
+### Dola 登录
+
+查看 Dola 会话列表、关联账号和登录状态，或对已关联的会话重新检测与登录。Dola 的生成和下载流程仍待端到端验收。
+
+![Dola 登录与会话管理](docs/assets/screenshots/dola-login.png)
+
+### 豆包登录
+
+集中查看豆包会话的来源、状态及关联账号，并管理登录状态和重新登录。
+
+![豆包登录与会话管理](docs/assets/screenshots/doubao-login.png)
+
+### 账号池
+
+在左侧切换账号并查看登录状态和视频额度估算，右侧打开该账号独立的豆包网页工作区。
+
+![账号池与豆包网页工作区](docs/assets/screenshots/account-pool.png)
+
+### 并发生成
+
+按批次整理分镜提示词和参考图，设置模型、比例、时长与分辨率。在确认各分镜就绪后批量发送，跟踪进度并保存产物。
+
+![并发生成与分镜批次](docs/assets/screenshots/storyboard-batch.png)
+
+### 字字动画
+
+在工作台保存插件包、查看安装步骤并检查连接。连接后可在字字动画中使用工作台账号池生成图片或视频。
+
+![字字动画插件与连接检查](docs/assets/screenshots/zizi-animation.png)
 
 ## 快速开始
 
@@ -306,8 +339,8 @@ CSV 模板见 [`examples/tasks-template.csv`](examples/tasks-template.csv)。
 ### 从源码启动
 
 ```bash
-git clone https://github.com/BigWangQiang/yuyan-workbench.git
-cd yuyan-workbench
+git clone https://github.com/BigWangQiang/doubao-workbench.git
+cd doubao-workbench
 pnpm install --frozen-lockfile
 pnpm --dir canvas-web install --ignore-workspace --frozen-lockfile
 pnpm run dev
@@ -315,7 +348,7 @@ pnpm run dev
 
 开发启动器会优先使用 `5173`。端口被占用时会自动选择后续空闲端口，并让 Electron 加载正确地址。
 
-若使用 GitHub Release 安装包，直接安装并启动即可。源码版和安装版可能解析到同一个 Electron 用户数据目录：切换版本前先在“更多”中创建完整备份，并确保任何时刻只运行一个豆包工作室实例。
+若使用 GitHub Release 安装包，直接安装并启动即可。源码版和安装版可能解析到同一个 Electron 用户数据目录：切换版本前先在“更多”中创建完整备份，并确保任何时刻只运行一个ai视频创作工作台实例。
 
 ## 第一次使用：从登录到下载
 
@@ -401,7 +434,7 @@ CLI 只创建本地任务，不会自动提交到豆包；导入后的任务仍�
 
 ### 豆包更新后按钮识别失效
 
-网页自动化依赖豆包当前 DOM 和交互结构。请导出脱敏诊断包，并在 [Issues](https://github.com/BigWangQiang/yuyan-workbench/issues) 中附上现象、阶段和相关日志。
+网页自动化依赖豆包当前 DOM 和交互结构。请导出脱敏诊断包，并在 [Issues](https://github.com/BigWangQiang/doubao-workbench/issues) 中附上现象、阶段和相关日志。
 
 ## 项目结构
 

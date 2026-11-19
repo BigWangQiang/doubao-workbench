@@ -3,7 +3,7 @@
  * 顶部工具栏
  *
  * 包含：
- * - 应用标题「豆包工作室」
+ * - 应用标题「ai视频创作工作台」
  * - 窗口控制按钮（最小化/最大化/关闭）
  * - 全局操作：全部暂停/继续、批量下载产物
  */
@@ -328,7 +328,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ sidebarCollapsed, onToggleSide
     },
     {
       key: 'about',
-      label: '关于屿砚工作台',
+      label: '关于ai视频创作工作台',
     },
   ];
 
@@ -350,7 +350,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ sidebarCollapsed, onToggleSide
         {/* 应用标题 */}
         <div className="app-brand flex items-center gap-2">
           <span className="app-brand-title text-lg font-bold text-db-accent">
-            屿砚工作台
+            ai视频创作工作台
           </span>
           <span className="app-version text-2xs text-db-text-muted bg-db-surface px-1.5 py-0.5 rounded">
             {appVersion ? `v${appVersion}` : '读取版本…'}

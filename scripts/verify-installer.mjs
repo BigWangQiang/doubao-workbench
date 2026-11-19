@@ -23,7 +23,7 @@ if (fuses[FuseV1Options.EnableEmbeddedAsarIntegrityValidation] !== '1'.charCodeA
 const read = (entry) => asar.extractFile(artifact.asarPath, path.normalize(entry)).toString('utf8');
 const pkg = JSON.parse(read('package.json'));
 if (pkg.name !== 'doubao-studio-desktop') fail('旧数据身份发生变化');
-if (path.basename(artifact.executablePath) !== '屿砚工作台.exe') fail('正式名称不正确');
+if (path.basename(artifact.executablePath) !== 'ai视频创作工作台.exe') fail('正式名称不正确');
 const config = yaml.load(fs.readFileSync(path.join(path.dirname(artifact.asarPath), 'app-update.yml'), 'utf8'));
 if (config.provider !== 'generic' || config.url !== 'https://yuyan-ai.site/desktop-updates/win-x64/') fail('更新源不是屿砚地址');
 const metadata = yaml.load(fs.readFileSync(path.join(root, 'latest.yml'), 'utf8'));
