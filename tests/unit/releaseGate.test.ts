@@ -17,9 +17,8 @@ describe('release gate', () => {
     const incomplete = Buffer.from('Lalor 账号中心 Lalor 会员已连接', 'utf8');
     const missing = ARTIFACT_FEATURES.filter((feature: { marker: string }) => !incomplete.includes(Buffer.from(feature.marker, 'utf8')));
     expect(missing.map((feature: { id: string }) => feature.id)).toEqual([
-      'startup-lalor-token-gate',
       'lalor-pairing-entry',
-      'lalor-auth-gate-shell',
+      'lalor-pairing-shell',
       'yuyan-account',
       'lalor-software-update',
       'zizi-plugin-page',

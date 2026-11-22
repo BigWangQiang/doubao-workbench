@@ -13,9 +13,8 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 export const ARTIFACT_FEATURES = Object.freeze([
-  { id: 'startup-lalor-token-gate', marker: '正在验证屿砚会员' },
-  { id: 'lalor-pairing-entry', marker: '验证会员并进入' },
-  { id: 'lalor-auth-gate-shell', marker: 'lalor-pairing-shell' },
+  { id: 'lalor-pairing-entry', marker: '验证并连接' },
+  { id: 'lalor-pairing-shell', marker: 'lalor-pairing-shell' },
   { id: 'yuyan-account', marker: '退出屿砚账号' },
   { id: 'lalor-software-update', marker: '重启并安装' },
   { id: 'zizi-plugin-page', marker: 'zizi-plugin-page' },
@@ -33,13 +32,9 @@ export const SOURCE_FEATURES = Object.freeze([
     allOf: ['https://yuyan-ai.site/desktop-updates/win-x64/', 'autoInstallOnAppQuit = false', '重启并安装'],
   },
   {
-    id: 'app-auth-gate-source',
-    files: [
-      'src/App.tsx',
-      'src/store/useLalorAuthStore.ts',
-      'src/components/PairingGatePage.tsx',
-    ],
-    allOf: ['useLalorAuthStore', 'authenticated', 'lalor-pairing-shell'],
+    id: 'yuyan-account-entry-source',
+    files: ['src/App.tsx', 'src/components/PairingGatePage.tsx'],
+    allOf: ["activeWorkspacePane === 'personal-center'", '<WorkspaceDashboard', '验证并连接'],
   },
   {
     id: 'lalor-pairing-source',

@@ -8,7 +8,6 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Alert, Button } from 'antd';
 import { PairingGatePage } from './components/PairingGatePage';
 import { Sidebar } from './components/Sidebar';
 import BrowserPanel from './components/BrowserPanel';
@@ -67,7 +66,6 @@ function getCurrentSidebarMaxWidth(): number {
 // ==================== 组件 ====================
 
 const App: React.FC = () => {
-  const [localViewAllowed, setLocalViewAllowed] = useState(false);
   /** 左侧面板宽度 */
   const [sidebarWidth, setSidebarWidth] = useState(() => clampSidebarWidth(
     DEFAULT_SIDEBAR_WIDTH,
@@ -115,8 +113,6 @@ const App: React.FC = () => {
 
   useEffect((): void => {
     if (authSnapshot.authenticated) {
-      // 到期仅停止新生成，不卸载当前画布和正在回收产物的浏览器。
-      setLocalViewAllowed(true);
       useTaskStore.getState().processQueue();
     }
   }, [authSnapshot.authenticated]);
@@ -126,7 +122,7 @@ const App: React.FC = () => {
   // ---- 初始化加载 ----
 
   useEffect(() => {
-    setStartupPhase('正在准备本地工作台');
+    // 后台读取账号状态，工作台与本地初始化无需等待。
     void loadLalorStatus();
   }, [loadLalorStatus]);
 
@@ -390,10 +386,7 @@ const App: React.FC = () => {
     if (activeWorkspacePane === 'tutorial') {
       return <EmbeddedResourcePage onClose={() => handleSelectWorkspacePane('workspace')} />;
     }
-    if (activeWorkspacePane === 'personal-center') {
-      return authSnapshot.authenticated ? <YuyanAccountPage /> : <PairingGatePage initialError={authSnapshot.error} />;
-    }
-    if (activeWorkspacePane === 'account-purchase') {
+    if (activeWorkspacePane === 'personal-center' || activeWorkspacePane === 'account-purchase') {
       return authSnapshot.authenticated ? <YuyanAccountPage /> : <PairingGatePage initialError={authSnapshot.error} />;
     }
     if (activeWorkspacePane === 'settings') {
@@ -475,16 +468,8 @@ const App: React.FC = () => {
 
   // ==================== 渲染 ====================
 
-  if (!authReady) return <StartupSplash visible phase="正在验证屿砚会员" />;
-  if (!authSnapshot.authenticated && !localViewAllowed) {
-    return <div className="app-root studio-ui"><PairingGatePage initialError={authSnapshot.error} onViewLocal={() => setLocalViewAllowed(true)} /></div>;
-  }
-
   return (
     <div className="app-root studio-ui">
-      {!authSnapshot.authenticated && <Alert banner type="warning" showIcon role="status"
-        message="当前仅可查看本地作品，生成需要有效的屿砚会员"
-        action={<Button size="small" onClick={() => handleSelectWorkspacePane('personal-center')}>登录 / 续费</Button>} />}
       {/* 顶部工具栏 */}
       <Toolbar
         onToggleSidebar={handleToggleCollapse}

@@ -5,10 +5,9 @@ import { useLalorAuthStore } from '../store/useLalorAuthStore';
 
 interface PairingGatePageProps {
   initialError?: string | null;
-  onViewLocal?: () => void;
 }
 
-export const PairingGatePage: React.FC<PairingGatePageProps> = ({ initialError, onViewLocal }) => {
+export const PairingGatePage: React.FC<PairingGatePageProps> = ({ initialError }) => {
   const [code, setCode] = useState('');
   const loading = useLalorAuthStore((state) => state.loading);
   const error = useLalorAuthStore((state) => state.error);
@@ -31,7 +30,7 @@ export const PairingGatePage: React.FC<PairingGatePageProps> = ({ initialError, 
         <div className="lalor-pairing-icon" aria-hidden="true"><LockOutlined /></div>
         <Typography.Title level={1}>连接屿砚账号</Typography.Title>
         <Typography.Paragraph className="lalor-pairing-lead">
-          有效付费会员可使用画布生成和本地账号池。订阅到期后，已有画布和素材仍可查看。
+          连接屿砚账号后，可使用账号已获授权的生成服务。
         </Typography.Paragraph>
         {message && (
           <Alert
@@ -60,7 +59,7 @@ export const PairingGatePage: React.FC<PairingGatePageProps> = ({ initialError, 
         </Typography.Text>
         <Space className="lalor-pairing-actions" wrap>
           <Button type="primary" size="large" loading={loading} disabled={!code.trim()} onClick={() => void submit()}>
-            验证会员并进入
+            验证并连接
           </Button>
           <Button size="large" icon={<LinkOutlined />} onClick={() => window.open('https://yuyan-ai.site/connections/desktop', '_blank')}>
             打开屿砚网站
@@ -68,7 +67,6 @@ export const PairingGatePage: React.FC<PairingGatePageProps> = ({ initialError, 
           <Button size="large" icon={<ReloadOutlined />} loading={loading} onClick={() => void loadStatus()}>
             重新检测
           </Button>
-          {onViewLocal && <Button size="large" type="text" onClick={onViewLocal}>仅查看本地作品</Button>}
         </Space>
         <Typography.Text type="secondary" className="lalor-pairing-security">
           <SafetyCertificateOutlined aria-hidden="true" /> 令牌由主进程加密保存，渲染页面不会读取或显示令牌内容。
